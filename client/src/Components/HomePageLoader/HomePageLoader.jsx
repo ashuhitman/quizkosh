@@ -5,15 +5,13 @@ import LoaderCard from "./LoaderCard";
 
 function HomePageLoader() {
   return (
-    <div>
-      <div className="test-container">
-        <LoaderCard />
-        <LoaderCard />
-        <LoaderCard />
-        <LoaderCard />
-        <LoaderCard />
-        <LoaderCard />
-      </div>
+    <div className="test-container">
+      <LoaderCard />
+      <LoaderCard />
+      <LoaderCard />
+      <LoaderCard />
+      <LoaderCard />
+      <LoaderCard />
     </div>
   );
 }

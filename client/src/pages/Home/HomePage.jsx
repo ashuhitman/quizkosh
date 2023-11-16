@@ -69,12 +69,10 @@ function HomePage() {
           </button>
         )}
       </div>
-      {testState.tests.length === 0 ? (
-        <div className="container">
+      <div className="outer-test-container">
+        {testState.tests.length === 0 ? (
           <HomePageLoader />
-        </div>
-      ) : (
-        <div className="outer-test-container">
+        ) : (
           <div className="test-container">
             {testState.tests
               .filter((test) => {
@@ -98,9 +96,9 @@ function HomePage() {
                 )
               )}
           </div>
-        </div>
-      )}
-      <Pagination />
+        )}
+        <Pagination />
+      </div>
     </div>
   );
 }

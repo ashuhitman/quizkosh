@@ -20,11 +20,7 @@ app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(
   cors({
-    origin: [
-      "http://127.0.0.1:5173",
-      "https://dreamy-cocada-4930e9.netlify.app/",
-      "https://keen-lokum-279032.netlify.app/",
-    ],
+    origin: ["http://127.0.0.1:5173", "https://keen-lokum-279032.netlify.app"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
