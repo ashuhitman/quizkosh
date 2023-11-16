@@ -24,7 +24,7 @@ function Header() {
   return (
     <div className={styles.navbar}>
       <Modal closeModal={closeModal} modal={modal} />
-      <div className={styles.logo}>Test Maniac</div>
+      <div className={styles.logo}>QuizKosh</div>
       <div className={styles.links}>
         {!home && (
           <div>

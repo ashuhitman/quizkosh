@@ -1,7 +1,7 @@
 // constants.js
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://test-maniac.onrender.com"
+    ? "https://quizkosh.onrender.com"
     : "http://127.0.0.1:8000";
 export const API_ENDPOINTS = {
   TESTS: API_BASE_URL + "/tests",

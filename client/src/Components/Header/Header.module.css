@@ -12,10 +12,11 @@
 .logo {
   /* border: 1px solid white; */
   font-family: "Open Sans";
-  background-color: black;
+  /* background-color: black; */
   padding: 5px 10px;
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+  font-style: bold;
 }
 .links {
   display: flex;
