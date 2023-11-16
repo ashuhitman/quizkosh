@@ -1,0 +1,46 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(76, 92, 108, 0.9);
+  z-index: 100;
+}
+.alert {
+  width: min(80%, 500px);
+  margin: auto;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+
+  padding: 15px;
+  border-radius: 4px;
+  color: white;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+@keyframes fadeIn {
+  100% {
+    opacity: 1;
+  }
+}
+.alertHead {
+  border-bottom: 1px dashed black;
+  padding-bottom: 4px;
+  font-size: 1.1em;
+}
+.alertBody {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+.alertFooter {
+  display: flex;
+  justify-content: end;
+}
+
+.alertFooter button {
+  padding: 6px 10px;
+  margin-left: 20px;
+  cursor: pointer;
+}

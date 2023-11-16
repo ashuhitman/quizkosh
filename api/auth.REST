@@ -1,0 +1,42 @@
+### Auth
+GET http://127.0.0.1:8000/auth
+
+### Auth
+GET http://127.0.0.1:8000/auth/users
+
+### signup
+POST http://127.0.0.1:8000/auth/signup
+Content-Type: application/json
+
+{
+    "name": "Ashutosh Singh",
+    "email": "ashu83066@gmail.com",
+    "password": "123456",
+    "repassword": "123456",
+    "mobile": "1223344557"
+}
+
+### login
+POST http://127.0.0.1:8000/auth/login
+Content-Type: application/json
+
+{
+    "email": "ashu83066@gmail.com",
+    "password": "123456"
+}
+
+### token
+POST http://127.0.0.1:8000/auth/token
+Content-Type: application/json
+
+### validate-token
+POST http://127.0.0.1:8000/auth/validate-token
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTUxNmJjMDg5MTMwODkxZmMyYzQxMmUiLCJuYW1lIjoiQXNodXRvc2ggU2luZ2giLCJlbWFpbCI6ImFzaHU4MzA2NkBnbWFpbC5jb20iLCJtb2JpbGUiOiIxMjIzMzQ0NTU3IiwiX192Ijo3LCJpYXQiOjE2OTk5ODE5NjYsImV4cCI6MTY5OTk4MjAyNn0.2tHlpOEhoXGZcgHb94YESUb21jnI9CtIjcKZsF_y3z0"
+}
+
+### logout
+DELETE  http://127.0.0.1:8000/auth/logout
+

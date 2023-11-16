@@ -1,0 +1,75 @@
+.modal {
+  z-index: 2;
+}
+.modal,
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.overlay {
+  background-color: rgba(49, 49, 49, 0.8);
+  opacity: 0.6;
+}
+
+.modal-content {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1.4;
+  background: #f1f1f1;
+  border-radius: 3px;
+  width: min(400px, 70%);
+  color: black;
+  padding: 20px 30px;
+  animation: slide 0.5s forwards;
+}
+@keyframes slide {
+  100% {
+    top: 40%;
+  }
+}
+.showModal {
+  /* top: 50%; */
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body > form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 20px;
+  row-gap: 5px;
+}
+.modal-body > form > .form-group {
+  display: flex;
+  flex-direction: column;
+}
+.modal-body > form > .form-footer {
+  align-self: center;
+  margin-top: 20px;
+}
+
+.form-group input {
+  flex: 1;
+  padding: 10px 10px;
+  border: none;
+}
+.error {
+  color: red;
+  font-size: 0.8em;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+}

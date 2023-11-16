@@ -1,0 +1,100 @@
+###
+GET http://127.0.0.1:8000/
+
+### Get all tests
+GET http://127.0.0.1:8000/tests
+
+### Get a test by id
+GET http://127.0.0.1:8000/tests/7514843bd5f73b9e7ed385ba
+
+### crate a test
+POST http://127.0.0.1:8000/tests/create
+Content-Type: application/json
+
+{
+    "testName": "test12343",
+    "subject": "Science",
+    "questionAmount": 15,
+    "timer": "30",
+    "questions": []
+}
+
+###
+PUT http://127.0.0.1:8000/tests/650ae323204e4e0860e5dcc8
+Content-Type: application/json
+
+{
+    "test_name": "test12343"
+}
+
+###
+DELETE http://127.0.0.1:8000/tests/650ae323204e4e0860e5dcc8
+
+### get all questions
+GET http://127.0.0.1:8000/questions/6514843bd5f73b9e7ed385ba
+
+### append questions
+POST http://127.0.0.1:8000/questions/add/6515f7c1e5ae3fde588d1650
+Content-Type: application/json
+
+{
+    "question": "What is formula of sulphric acid?",
+    "options": [
+    { "text": "H2SO4", "isAnswer": true },
+    { "text": "H20", "isAnswer": false },
+    { "text": "HN03", "isAnswer": false },
+    { "text": "H2S03", "isAnswer": false }]
+}
+
+### append  many questions
+POST http://127.0.0.1:8000/questions/add/6515f7c1e5ae3fde588d1650
+Content-Type: application/json
+
+[{
+    "question": "What is formula of sulphric acid?",
+    "options": [
+    { "text": "H2SO4", "isAnswer": true },
+    { "text": "H20", "isAnswer": false },
+    { "text": "HN03", "isAnswer": false },
+    { "text": "H2S03", "isAnswer": false }]
+},
+{
+    "question": "What is for yr s rmula of sulphric acid?",
+    "options": [
+    { "text": "H2SO4", "isAnswer": true },
+    { "text": "H20", "isAnswer": false },
+    { "text": "HN03", "isAnswer": false },
+    { "text": "H2S03", "isAnswer": false }]
+},
+{
+    "question": "What is for yr s rmula of sulphric acid?",
+    "options": [
+    { "text": "H2SO4", "isAnswer": true },
+    { "text": "H20", "isAnswer": false },
+    { "text": "HN03", "isAnswer": false },
+    { "text": "H2S03", "isAnswer": false }]
+}]
+
+### 
+POST http://127.0.0.1:8000/questions/update/650746f8597a3bfce666b03c
+Content-Type: application/json
+
+{
+ "question": "What is earth?",
+ "id": "650b12170e7c69779b39eb21"
+}
+
+
+### 
+PUT http://127.0.0.1:8000/questions/options/update/650746f8597a3bfce666b03c
+Content-Type: application/json
+
+{
+    "id": "650b12170e7c69779b39eb21",
+    "option": {
+          "text": "10g",
+          "isAnswer": false,
+          "id": "650b12170e7c69779b39eb22"
+        }
+}
+

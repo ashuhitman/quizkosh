@@ -1,0 +1,78 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+/* .test-container {
+  padding: 15px;
+  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  height: 100%;
+  margin-bottom: 40px;
+} */
+
+.filter-text {
+  padding-left: 15px;
+  display: flex;
+  color: white;
+  gap: 20px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+}
+.filter-text button {
+  border: none;
+  padding: 10px 5px;
+  background-color: inherit;
+  cursor: pointer;
+  border-bottom: 2px solid white;
+}
+.filter-text button:hover {
+  color: #2b3d4e;
+}
+.filter-text .active-filter {
+  border-bottom: 2px solid #2b3d4e;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  .test-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.outer-test-container {
+  display: flex;
+  justify-content: center;
+}
+
+.test-container {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(150px, 1fr)
+  ); /* Adjust item width here */
+  gap: 20px; /* Adjust gap between items as needed */
+  width: 100%; /* Subtract space from both sides (20px + 20px) */
+  margin: 0 20px;
+  margin-bottom: 40px;
+}
+
+.item {
+  width: 100%; /* Each item occupies 100% width within the grid cell */
+  height: 200px; /* Fixed height for each item */
+  background-color: #e0e0e0;
+  text-align: center;
+}
+
+.item:nth-child(3n + 1) {
+  margin-left: 0; /* Reset margin for the first item in each row */
+}
+
+@media (max-width: 460px) {
+  .container {
+    justify-items: center; /* Center items for smaller screens */
+  }
+}

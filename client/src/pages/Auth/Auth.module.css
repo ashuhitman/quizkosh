@@ -1,0 +1,84 @@
+.authContainer {
+  color: black;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #95afc0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box {
+  width: min(350px, 90%);
+  border: 2px solid #2c3e50;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.authButtons {
+  display: flex;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.authButtons > button {
+  flex-grow: 1;
+  padding: 10px 10px;
+  background-color: #2c3e50;
+  border: none;
+  font-weight: bold;
+  font-size: 1.1em;
+  cursor: pointer;
+  color: white;
+}
+.not-active {
+  background-color: #95afc0 !important;
+  color: white;
+}
+.auth > div {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 0px;
+}
+.auth form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0px;
+}
+.loginForm {
+  margin-top: 15px;
+  row-gap: 15px !important;
+}
+.auth input {
+  padding: 10px 8px;
+}
+.auth input:focus {
+  outline: none;
+  border: 1px solid #2c3e50 !important;
+  border-radius: 2px !important;
+}
+
+.auth a {
+  font-size: 0.8em;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  margin: auto;
+  margin-top: 10px;
+}
+.auth button {
+  padding: 10px 8px;
+  background-color: #2c3e50;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.auth button:hover {
+  background-color: #344659;
+}
