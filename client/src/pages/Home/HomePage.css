@@ -56,16 +56,17 @@
   margin-left: 0; /* Reset margin for the first item in each row */
 }
 
-@media (max-width: 460px) {
+/* @media (max-width: 460px) {
   .test-container {
-    justify-items: center; /* Center items for smaller screens */
+    justify-items: center; 
   }
-}
+} */
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
   .test-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    margin: 0px !important;
   }
 }
