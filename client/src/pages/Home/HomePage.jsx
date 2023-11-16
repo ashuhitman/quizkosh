@@ -30,6 +30,7 @@ function HomePage() {
     }
 
     console.log("fetching test data ...");
+    axios.defaults.withCredentials = true;
     axios
       .get(API_ENDPOINTS.TESTS)
       .then((response) =>
