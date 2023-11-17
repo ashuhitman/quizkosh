@@ -18,8 +18,15 @@ function TestCard({ cardData }) {
     const questions = getNewArray(data.questions);
     // update the questions
     data.questions = questions;
+    // get token
+    const token = localStorage.getItem("token");
+    // CLEAR local storage
+    localStorage.clear();
+    // save token in local storage
+    if (!token) localStorage.setItem("token", token);
     // save current test to local storage
     localStorage.setItem("test", JSON.stringify(data));
+    console.log("data", data);
     // set test state
     dispatch({ type: actions.reset, payload: { test: data } });
     // goto quiz page

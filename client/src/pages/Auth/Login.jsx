@@ -8,7 +8,7 @@ import { useAuth } from "../../context/Auth/AuthState";
 import { parseJwt } from "../../utils/parsejwt";
 import { AUTH_API_ENDPOINTS } from "../../utils/constants";
 
-function Login() {
+function Login({ handleShowAlert }) {
   const { login, logout, isValidToken } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -30,7 +30,7 @@ function Login() {
     e.preventDefault();
 
     // validate form data
-
+    setLoading(true);
     const [isError, errors, data] = validateUseData(formData, 0);
     // if validation fails, show error message
     if (isError) {
@@ -47,14 +47,17 @@ function Login() {
       console.log(result);
 
       if (result) {
-        login(result);
         // go to home page
         // navigate("/");
+        const message = result.data.success;
+        handleShowAlert(true, message, "#def0d8", "#49754b");
+        login(result);
       }
     } catch (error) {
       console.log("error", error);
+      handleShowAlert(true, error.response.data.error);
+      setLoading(false);
     }
-    setLoading(false);
   };
   useEffect(() => {
     if (isValidToken) {

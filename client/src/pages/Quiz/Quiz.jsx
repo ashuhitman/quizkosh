@@ -58,6 +58,7 @@ function Quiz() {
     console.log("screen width: ", isMobile);
     setShowSidebar(isMobile);
     let time;
+    console.log(testState);
     if (!testState.test) {
       // check if data is locally available
       const localStorageData = JSON.parse(localStorage.getItem("test") || "{}");
@@ -67,7 +68,7 @@ function Quiz() {
         time = localStorageData.timer;
         // set test data
         dispatch({
-          type: actions.update_test,
+          type: actions.reset,
           payload: { test: localStorageData },
         });
       } else {
@@ -136,6 +137,7 @@ function Quiz() {
     saveStateToLocalStorage(quizState);
     stop();
     console.log("submit: ", testState);
+    return true;
   };
 
   const saveStateToLocalStorage = (state) => {
@@ -307,6 +309,7 @@ function Quiz() {
   };
 
   if (!testState.test) {
+    console.log("loading...", testState);
     return <div style={{ color: "black" }}>Loading...</div>;
   }
 

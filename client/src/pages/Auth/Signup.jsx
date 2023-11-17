@@ -5,7 +5,7 @@ import axios from "axios";
 import Input from "../../Components/Input/Input";
 import { validateUseData } from "../../utils/validation";
 
-function Signup() {
+function Signup({ changeAuthState, handleShowAlert }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -47,8 +47,15 @@ function Signup() {
         data
       );
       console.log(result);
+      if (result) {
+        const message = result.data.success;
+        changeAuthState(0);
+        handleShowAlert(true, message, "#def0d8", "#49754b");
+      }
     } catch (error) {
       console.log("error", error);
+      const message = error.response.data.error;
+      handleShowAlert(true, message);
     }
     setLoading(false);
   };

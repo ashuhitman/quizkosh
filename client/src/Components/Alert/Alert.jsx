@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from "./Alert.module.css";
-import Button from "../Button/Button";
 
 function Alert({
   show = false,
@@ -26,8 +25,9 @@ function Alert({
           {handleLeft && (
             <button
               onClick={() => {
-                handleLeft();
-                showHandler(false);
+                if (handleLeft()) {
+                  showHandler(false);
+                }
               }}
             >
               {leftText}

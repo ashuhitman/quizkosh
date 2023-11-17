@@ -1,0 +1,29 @@
+.alert {
+  z-index: 100;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  animation: slideIn 0.3s linear forwards;
+  /* display: none; */
+}
+
+.alert > div {
+  padding: 8px 20px 10px 20px;
+  background-color: black;
+  width: min(350px, 90%);
+  margin: auto;
+  height: fit-content;
+  border-radius: 2px;
+  text-align: center;
+}
+/* The animation code */
+@keyframes slideIn {
+  0% {
+    top: -30px;
+  }
+
+  100% {
+    top: 20px;
+  }
+}

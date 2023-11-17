@@ -11,6 +11,7 @@ import { actions } from "../../context/Test/TestState";
 import Pagination from "../../Components/Pagination/Pagination";
 import { useAuth } from "../../context/Auth/AuthState";
 import { parseJwt } from "../../utils/parsejwt";
+import Alert from "../../Components/Alert/Alert";
 
 function HomePage() {
   // test context
@@ -21,6 +22,7 @@ function HomePage() {
   const ystDate = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
   const [tests, setTests] = useState([]);
   const [visibleTest, setVisibleTest] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
   // console.log(tests);
 
   useEffect(() => {
@@ -46,7 +48,16 @@ function HomePage() {
 
   return (
     <div className="container">
-      <Header />
+      <Header home={!isValidToken} showAlert={setShowAlert} />
+      <Alert
+        show={showAlert}
+        showHandler={setShowAlert}
+        title="Logout"
+        body="Are you sure?"
+        leftText="Yes"
+        handleLeft={logout}
+        rightText="No"
+      />
       <div className="filter-text">
         <button
           className={visibleTest === 0 ? "active-filter" : ""}

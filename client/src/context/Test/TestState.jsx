@@ -45,7 +45,7 @@ const testReducer = (state, action) => {
         showSolution: true,
       };
     case actions.reset:
-      return intialState;
+      return { ...intialState, test: action.payload.test };
     case actions.restart_test:
       return {
         ...state,

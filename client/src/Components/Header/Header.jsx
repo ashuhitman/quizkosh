@@ -6,21 +6,15 @@ import Modal from "../Modal/Modal";
 import axios from "axios";
 import { useAuth } from "../../context/Auth/AuthState";
 
-function Header() {
+function Header({ home, showAlert }) {
   const [modal, setModal] = useState(false);
   const closeModal = () => setModal(!modal);
-  const { login, logout, isValidToken } = useAuth();
-  const home = !isValidToken;
+
   const handleClick = (e) => {
     e.preventDefault();
     closeModal();
   };
 
-  const logoutUser = () => {
-    try {
-      axios.post("");
-    } catch (error) {}
-  };
   return (
     <div className={styles.navbar}>
       <Modal closeModal={closeModal} modal={modal} />
@@ -49,7 +43,7 @@ function Header() {
                 color: "white",
                 cursor: "pointer",
               }}
-              onClick={() => logout()}
+              onClick={() => showAlert(true)}
             >
               Logout
             </button>

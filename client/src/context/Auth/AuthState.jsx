@@ -6,11 +6,12 @@ import { AUTH_API_ENDPOINTS } from "../../utils/constants";
 export const AuthContext = createContext();
 
 export function AuthState(props) {
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [isValidToken, setIsValidToken] = useState(false);
   const [user, setUser] = useState(null);
-  console.log("auth state: ", token, isValidToken, user);
+  console.log("auth state: ", token, !token, isValidToken, user);
   const validateToken = async () => {
+    console.log("token: ", token);
     if (!token) {
       setIsValidToken(false);
       return;
@@ -49,8 +50,10 @@ export function AuthState(props) {
       setIsValidToken(false);
       setUser(null);
       localStorage.removeItem("token");
+      return true;
     } catch (error) {
       console.log("error", error);
+      return false;
     }
   };
   const refreshToekn = async () => {
