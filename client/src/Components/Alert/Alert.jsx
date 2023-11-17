@@ -13,6 +13,7 @@ function Alert({
   color = "white",
 }) {
   if (!show) return <></>;
+
   return (
     <div className={styles.overlay}>
       <div
@@ -24,8 +25,9 @@ function Alert({
         <div className={styles.alertFooter}>
           {handleLeft && (
             <button
-              onClick={() => {
-                if (handleLeft()) {
+              onClick={async () => {
+                if (await handleLeft()) {
+                  console.log("hide old");
                   showHandler(false);
                 }
               }}
