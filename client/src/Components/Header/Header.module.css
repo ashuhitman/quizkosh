@@ -20,9 +20,7 @@
 }
 .links {
   display: flex;
-}
-.links > div {
-  margin-right: 20px;
+  padding: 5px 10px;
 }
 
 .link {

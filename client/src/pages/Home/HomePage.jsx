@@ -23,15 +23,17 @@ function HomePage() {
   const [tests, setTests] = useState([]);
   const [visibleTest, setVisibleTest] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
   // console.log(tests);
 
   useEffect(() => {
-    console.log("homepage: ", testState);
+    console.log("homepage: ", testState.tests);
     if (testState.tests.length > 0) {
       return;
     }
 
-    console.log("fetching test data ...");
+    console.log("running tests ...");
     axios.defaults.withCredentials = true;
     axios
       .get(API_ENDPOINTS.TESTS)

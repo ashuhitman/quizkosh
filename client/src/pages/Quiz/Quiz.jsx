@@ -43,6 +43,7 @@ function Quiz() {
   const [quizState, quizDispatch] = useReducer(quizReducer, quizintialState);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
+  console.log(testState);
 
   // console.log("quiz initialized: ", quizState);
   // get document id
