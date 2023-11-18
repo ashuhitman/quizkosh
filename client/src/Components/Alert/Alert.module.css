@@ -29,6 +29,12 @@
   border-bottom: 1px dashed black;
   padding-bottom: 4px;
   font-size: 1.1em;
+  display: flex;
+  align-items: center;
+}
+.alertHead > p {
+  margin: 0px;
+  margin-right: 10px;
 }
 .alertBody {
   margin-top: 6px;

@@ -4,9 +4,11 @@ import Input from "../../Components/Input/Input";
 import Login from "./Login";
 import Signup from "./Signup";
 import AlertMessage from "../../Components/AlertMessage/AlertMessage";
+import Loader from "../../Components/Loader/Loader";
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [alertData, setAlertData] = useState({
     show: false,
     message: "",
@@ -23,6 +25,7 @@ function Auth() {
     setAlertData({ ...alertData, show, backgroundColor, color, message });
   };
   const changeAuthState = (x) => {
+    if (loading) return;
     x == 0 ? setIsLogin(true) : setIsLogin(false);
   };
   return (
@@ -33,7 +36,8 @@ function Auth() {
       <div className={styles.authContainer}>
         <div className={styles.box}>
           <div style={{ textAlign: "center" }}>
-            <h2>{isLogin ? "Login Form" : "Signup Form"}</h2>
+            <h2>{isLogin ? "Login Form" : "Signup Form"}</h2>{" "}
+            {loading && <Loader size="15px" />}
           </div>
           <div className={styles.authButtons}>
             <button
@@ -51,11 +55,17 @@ function Auth() {
           </div>
           <div className={styles.auth}>
             {isLogin ? (
-              <Login handleShowAlert={handleShowAlert} />
+              <Login
+                handleShowAlert={handleShowAlert}
+                loading={loading}
+                setLoading={setLoading}
+              />
             ) : (
               <Signup
                 changeAuthState={changeAuthState}
                 handleShowAlert={handleShowAlert}
+                oading={loading}
+                setLoading={setLoading}
               />
             )}
           </div>

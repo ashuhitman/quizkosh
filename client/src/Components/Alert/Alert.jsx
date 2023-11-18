@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Alert.module.css";
+import Loader from "../Loader/Loader";
 
 function Alert({
   show = false,
@@ -12,6 +13,7 @@ function Alert({
   bgColor = "#2c3e50",
   color = "white",
 }) {
+  const [showLoader, setShowLoader] = useState(false);
   if (!show) return <></>;
 
   return (
@@ -20,12 +22,16 @@ function Alert({
         className={styles.alert}
         style={{ backgroundColor: bgColor, color: color }}
       >
-        <div className={styles.alertHead}>{title}</div>
+        <div className={styles.alertHead}>
+          <p>{title}</p>
+          {showLoader && <Loader size="10px" />}
+        </div>
         <div className={styles.alertBody}>{body}</div>
         <div className={styles.alertFooter}>
           {handleLeft && (
             <button
               onClick={async () => {
+                setShowLoader(true);
                 if (await handleLeft()) {
                   console.log("hide old");
                   showHandler(false);

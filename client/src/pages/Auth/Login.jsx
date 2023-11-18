@@ -7,8 +7,9 @@ import { validateUseData } from "../../utils/validation";
 import { useAuth } from "../../context/Auth/AuthState";
 import { parseJwt } from "../../utils/parsejwt";
 import { AUTH_API_ENDPOINTS } from "../../utils/constants";
+import Loader from "../../Components/Loader/Loader";
 
-function Login({ handleShowAlert }) {
+function Login({ handleShowAlert, loading, setLoading }) {
   const { login, logout, isValidToken } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -20,7 +21,6 @@ function Login({ handleShowAlert }) {
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

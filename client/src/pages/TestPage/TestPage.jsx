@@ -179,7 +179,7 @@ function TestPage() {
       if (result) {
         // get the data
         const test = result.data.data;
-        test && dispatch({ action: actions.update_tests, payload: { test } });
+        if (test) dispatch({ action: actions.update_tests, payload: { test } });
         // navigate to homepage
         navigate("/");
       }

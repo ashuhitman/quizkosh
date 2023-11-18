@@ -5,7 +5,7 @@ import axios from "axios";
 import Input from "../../Components/Input/Input";
 import { validateUseData } from "../../utils/validation";
 
-function Signup({ changeAuthState, handleShowAlert }) {
+function Signup({ changeAuthState, handleShowAlert, loading, setLoading }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,7 +21,6 @@ function Signup({ changeAuthState, handleShowAlert }) {
     psd: "",
     mobile: "",
   });
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value.trim() });

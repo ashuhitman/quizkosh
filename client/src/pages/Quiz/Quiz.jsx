@@ -37,6 +37,7 @@ import {
 } from "../../utils/utils";
 import CircularImage from "../../Components/CircularImage/CircularImage";
 import useCountdownTimer from "../../Hooks/useCountDownTimer";
+import Loader from "../../Components/Loader/Loader";
 
 function Quiz() {
   const { testState, dispatch } = useContext(TestContext);
@@ -311,7 +312,22 @@ function Quiz() {
 
   if (!testState.test) {
     console.log("loading...", testState);
-    return <div style={{ color: "black" }}>Loading...</div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "0px",
+          left: "0px",
+          right: "0px",
+          bottom: "0px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Loader size="40px" borderWidth="8px" />
+      </div>
+    );
   }
 
   return (
