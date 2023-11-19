@@ -223,7 +223,7 @@ function HomePage() {
           <div className="test-container">
             {testState.visibleTests.map((test, index) =>
               test.questions.length === 0 ? (
-                ""
+                <TestCard key={index} cardData={test} disabled={true} />
               ) : (
                 <TestCard key={index} cardData={test} />
               )

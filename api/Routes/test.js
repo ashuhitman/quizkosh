@@ -12,8 +12,10 @@ router.get("/", async (req, res) => {
   const pageSize = parseInt(req.query.pageSize) || 12; // Set a default page size
 
   try {
-    const totalTests = await Test.countDocuments();
-    const tests = await Test.find()
+    const totalTests = await Test.countDocuments({
+      questions: { $exists: true, $ne: [] },
+    });
+    const tests = await Test.find({ questions: { $exists: true, $ne: [] } })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
 
@@ -41,8 +43,12 @@ router.get("/latest", async (req, res) => {
     yesterday.setDate(yesterday.getDate() - 2);
     const totalLatestTests = await Test.countDocuments({
       createdAt: { $gte: yesterday },
+      questions: { $exists: true, $ne: [] },
     });
-    const latestData = await Test.find({ createdAt: { $gte: yesterday } })
+    const latestData = await Test.find({
+      createdAt: { $gte: yesterday },
+      questions: { $exists: true, $ne: [] },
+    })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
 
@@ -69,8 +75,14 @@ router.post("/", async (req, res) => {
   const pageSize = parseInt(req.query.pageSize) || 12; // Set a default page size
   try {
     const id = req.body.id;
-    const userTestsCount = await Test.countDocuments({ user: id });
-    const userTests = await Test.find({ user: id })
+    const userTestsCount = await Test.countDocuments({
+      user: id,
+      questions: { $exists: true, $ne: [] },
+    });
+    const userTests = await Test.find({
+      user: id,
+      questions: { $exists: true, $ne: [] },
+    })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
 

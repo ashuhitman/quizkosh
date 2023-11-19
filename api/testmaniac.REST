@@ -2,7 +2,7 @@
 GET http://127.0.0.1:8000/
 
 ### Get all tests
-GET http://127.0.0.1:8000/tests
+GET http://127.0.0.1:8000/tests?page=1&pageSize=6
 
 ### Get all latest tests
 GET http://127.0.0.1:8000/tests/latest

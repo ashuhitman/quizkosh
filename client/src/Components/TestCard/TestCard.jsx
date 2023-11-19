@@ -5,7 +5,7 @@ import TestContext from "../../context/Test/TestContext";
 import { actions } from "../../context/Test/TestState";
 import { getNewArray } from "../../utils/utils";
 
-function TestCard({ cardData }) {
+function TestCard({ cardData, disabled }) {
   const navigate = useNavigate();
   const { _id, testName, timer, questionAmount, subject, questions } = cardData;
   const { testState, dispatch } = useContext(TestContext);
@@ -33,7 +33,10 @@ function TestCard({ cardData }) {
     navigate(`/tests/${_id}`, { state: cardData });
   };
   return (
-    <div className={styles.card}>
+    <div
+      className={`${styles.card} ${!disabled && styles.enabled}`}
+      style={{ backgroundColor: disabled ? "#808080d9" : "#c8d6e5" }}
+    >
       <div className={styles["card-head"]}>{testName}</div>
       <div className={styles["card-body"]}>
         <div>
@@ -47,7 +50,13 @@ function TestCard({ cardData }) {
         </div>
       </div>
       <div className={styles["card-footer"]}>
-        <button onClick={goToQuizPage}>Start the Test</button>
+        <button
+          onClick={goToQuizPage}
+          disabled={disabled}
+          style={{ backgroundColor: disabled ? "grey" : "#e67e22" }}
+        >
+          Start the Test
+        </button>
       </div>
     </div>
   );
