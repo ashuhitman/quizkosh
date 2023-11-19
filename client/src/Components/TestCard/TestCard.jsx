@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import TestContext from "../../context/Test/TestContext";
 import { actions } from "../../context/Test/TestState";
 import { getNewArray } from "../../utils/utils";
+import { MdEditDocument } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
-function TestCard({ cardData, disabled }) {
+function TestCard({ cardData, disabled, user }) {
   const navigate = useNavigate();
   const { _id, testName, timer, questionAmount, subject, questions } = cardData;
   const { testState, dispatch } = useContext(TestContext);
@@ -37,6 +39,16 @@ function TestCard({ cardData, disabled }) {
       className={`${styles.card} ${!disabled && styles.enabled}`}
       style={{ backgroundColor: disabled ? "#808080d9" : "#c8d6e5" }}
     >
+      {user && (
+        <div className={styles.icons}>
+          <div className={styles.circle}>
+            <MdDelete />
+          </div>
+          <div className={styles.circle}>
+            <MdEditDocument />
+          </div>
+        </div>
+      )}
       <div className={styles["card-head"]}>{testName}</div>
       <div className={styles["card-body"]}>
         <div>

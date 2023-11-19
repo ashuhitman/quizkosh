@@ -77,11 +77,9 @@ router.post("/", async (req, res) => {
     const id = req.body.id;
     const userTestsCount = await Test.countDocuments({
       user: id,
-      questions: { $exists: true, $ne: [] },
     });
     const userTests = await Test.find({
       user: id,
-      questions: { $exists: true, $ne: [] },
     })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
