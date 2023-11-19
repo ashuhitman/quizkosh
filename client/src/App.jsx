@@ -37,8 +37,8 @@ function App() {
     },
   ];
   return (
-    <AuthState>
-      <QuizState>
+    <QuizState>
+      <AuthState>
         <BrowserRouter>
           <Routes>
             {routes.map((route, index) => (
@@ -50,8 +50,8 @@ function App() {
             ))}
           </Routes>
         </BrowserRouter>
-      </QuizState>
-    </AuthState>
+      </AuthState>
+    </QuizState>
   );
 }
 

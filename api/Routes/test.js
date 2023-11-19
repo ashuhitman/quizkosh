@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     const tests = await Test.find()
       .skip((page - 1) * pageSize)
       .limit(pageSize);
-    console.log(totalTests, tests.length);
+
     if (tests) {
       res.json({
         data: tests,
@@ -33,13 +33,26 @@ router.get("/", async (req, res) => {
 });
 // fetch latest tests
 router.get("/latest", async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // Get the requested page, default to 1
+  const pageSize = parseInt(req.query.pageSize) || 12; // Set a default page size
+
   try {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 2);
-    const latestData = await Test.find({ createdAt: { $gte: yesterday } });
+    const totalLatestTests = await Test.countDocuments({
+      createdAt: { $gte: yesterday },
+    });
+    const latestData = await Test.find({ createdAt: { $gte: yesterday } })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
 
-    if (latestData.length > 0) {
-      res.status(200).send({ data: latestData, isData: true });
+    if (latestData) {
+      res.json({
+        data: latestData,
+        currentPage: page,
+        totalPages: Math.ceil(totalLatestTests / pageSize),
+        pageSize: pageSize,
+      });
     } else {
       res
         .status(200)
@@ -52,11 +65,22 @@ router.get("/latest", async (req, res) => {
 // fetch test created by user
 // fetch all tests
 router.post("/", async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // Get the requested page, default to 1
+  const pageSize = parseInt(req.query.pageSize) || 12; // Set a default page size
   try {
     const id = req.body.id;
-    const tests = await Test.find({ user: id });
-    if (tests) {
-      res.status(200).send({ data: tests });
+    const userTestsCount = await Test.countDocuments({ user: id });
+    const userTests = await Test.find({ user: id })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    if (userTests) {
+      res.json({
+        data: userTests,
+        currentPage: page,
+        totalPages: Math.ceil(userTestsCount / pageSize),
+        pageSize: pageSize,
+      });
     } else {
       res.send({ error: "invalid id", data: [] });
     }

@@ -1,7 +1,7 @@
 import React from "react";
 import "./Pagination.css";
 
-function Pagination({ page, totalPage, goToPrePage, goToNextPage }) {
+function Pagination({ page, totalPages, goToPrePage, goToNextPage }) {
   return (
     <div className="pagination">
       <input
@@ -10,16 +10,16 @@ function Pagination({ page, totalPage, goToPrePage, goToNextPage }) {
         onClick={goToPrePage}
         disabled={page === 1}
       />
-      {totalPage > 0 && (
+      {totalPages > 0 && (
         <p>
-          {page} of {totalPage}{" "}
+          {page} of {totalPages}{" "}
         </p>
       )}
       <input
         type="button"
         value="NEXT"
         onClick={goToNextPage}
-        disabled={page === totalPage}
+        disabled={page === totalPages}
       />
     </div>
   );

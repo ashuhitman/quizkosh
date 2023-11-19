@@ -23,21 +23,32 @@ function HomePage() {
   const [visibleTest, setVisibleTest] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
+  const totalPages = testState.totalPages;
   const [tests, setTests] = useState([]);
-  console.log("homepage: ", testState);
+  console.log("homepage: ", testState, totalPages, currentPage);
 
   // console.log(tests);
   const goToPreviousPage = () => {
+    const totalPage =
+      visibleTest === 0
+        ? totalPages.alltests
+        : visibleTest === 1
+        ? totalPages.latest
+        : totalPages.mytest;
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
-      fetchActiveTestData();
     }
   };
   const goToNextPage = () => {
+    const totalPage =
+      visibleTest === 0
+        ? totalPages.alltests
+        : visibleTest === 1
+        ? totalPages.latest
+        : totalPages.mytest;
     if (currentPage < totalPage) {
+      console.log("next clicked");
       setCurrentPage(currentPage + 1);
-      fetchActiveTestData();
     }
   };
 
@@ -55,27 +66,31 @@ function HomePage() {
 
       let data;
       let actionType;
+      let pages;
       if (action === 0) {
         data = testState.tests;
         data[currentPage - 1] = response.data.data;
         actionType = actions.save_tests;
+        pages = { alltests: response.data.totalPages };
       } else if (action === 1) {
         data = testState.latest;
         data[currentPage - 1] = response.data.data;
         actionType = actions.save_latest;
+        pages = { latest: response.data.totalPages };
       } else if (action === 2) {
         data = testState.myTest;
         data[currentPage - 1] = response.data.data;
         actionType = actions.save_mytest;
+        pages = { mytest: response.data.totalPages };
       }
 
       setLoading(false);
-      setTotalPage(response.data.totalPages);
       dispatch({
         type: actionType,
         payload: {
           tests: data,
           visibleTest: response.data.data,
+          totalPages: pages,
         },
       });
     } catch (error) {
@@ -94,12 +109,12 @@ function HomePage() {
     if (visibleTest === 0) {
       console.log(testState.tests.length);
       if (
-        testState.tests[currentPage] &&
-        testState.tests[currentPage].length > 0
+        testState.tests[currentPage - 1] &&
+        testState.tests[currentPage - 1].length > 0
       ) {
         dispatch({
           type: actions.update_visibile_tests,
-          payload: testState.tests[currentPage],
+          payload: testState.tests[currentPage - 1],
         });
         setLoading(false);
         return;
@@ -110,55 +125,62 @@ function HomePage() {
       );
     } else if (visibleTest === 1) {
       if (
-        testState.latest[currentPage] &&
-        testState.latest[currentPage].length > 0
+        testState.latest[currentPage - 1] &&
+        testState.latest[currentPage - 1].length > 0
       ) {
         dispatch({
           type: actions.update_visibile_tests,
-          payload: testState.latest[currentPage],
+          payload: testState.latest[currentPage - 1],
         });
         setLoading(false);
         return;
       }
-      fetchData(API_ENDPOINTS.TESTS + "/latest", 1);
+      fetchData(
+        `${API_ENDPOINTS.TESTS}/latest?page=${currentPage}&pageSize=${pageSize}`,
+        1
+      );
     } else if (visibleTest === 2) {
       if (
-        testState.myTest[currentPage] &&
-        testState.myTest[currentPage].length > 0
+        testState.myTest[currentPage - 1] &&
+        testState.myTest[currentPage - 1].length > 0
       ) {
         dispatch({
           type: actions.update_visibile_tests,
-          payload: testState.myTest[currentPage],
+          payload: testState.myTest[currentPage - 1],
         });
         setLoading(false);
         return;
       }
-      fetchData(API_ENDPOINTS.TESTS, 2);
+      fetchData(
+        `${API_ENDPOINTS.TESTS}?page=${currentPage}&pageSize=${pageSize}`,
+        2
+      );
     }
   };
 
   const setActiveTest = (activeTest) => {
     if (visibleTest !== activeTest) {
       setVisibleTest(activeTest);
-      currentPage(0);
+      setCurrentPage(1);
     }
   };
 
   const logoutUser = async () => {
     if (await logout()) {
       const data = testState.tests[0] ? testState.tests[0] : [];
-      setCurrentPage(0);
-      dispatch({
-        type: actions.save_mytest,
-        payload: { myTest: [], visibleTest: data },
-      });
+      setVisibleTest(0);
+      setCurrentPage(1);
+      // dispatch({
+      //   type: actions.save_mytest,
+      //   payload: { tests: [], visibleTest: data },
+      // });
       return true;
     }
     return false;
   };
   useEffect(() => {
     fetchActiveTestData();
-  }, [visibleTest]);
+  }, [visibleTest, currentPage]);
 
   return (
     <div className="container">
@@ -211,7 +233,13 @@ function HomePage() {
         <Pagination
           goToPrePage={goToPreviousPage}
           goToNextPage={goToNextPage}
-          totalPage={totalPage}
+          totalPages={
+            visibleTest === 0
+              ? totalPages.alltests
+              : visibleTest === 1
+              ? totalPages.latest
+              : totalPages.mytest
+          }
           page={currentPage}
         />
       </div>

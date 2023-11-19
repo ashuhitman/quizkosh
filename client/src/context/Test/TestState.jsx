@@ -18,6 +18,11 @@ const intialState = {
   latest: [],
   myTest: [],
   visibleTests: [],
+  totalPages: {
+    alltests: 0,
+    latest: 0,
+    mytest: 0,
+  },
 };
 const testReducer = (state, action) => {
   console.log(action);
@@ -27,18 +32,27 @@ const testReducer = (state, action) => {
         ...state,
         tests: action.payload.tests,
         visibleTests: action.payload.visibleTest,
+        totalPages: action.payload.totalPages
+          ? { ...state.totalPages, ...action.payload.totalPages }
+          : state.totalPages,
       };
     case actions.save_latest:
       return {
         ...state,
         latest: action.payload.tests,
         visibleTests: action.payload.visibleTest,
+        totalPages: action.payload.totalPages
+          ? { ...state.totalPages, ...action.payload.totalPages }
+          : state.totalPages,
       };
     case actions.save_mytest:
       return {
         ...state,
         myTest: action.payload.tests,
         visibleTests: action.payload.visibleTest,
+        totalPages: action.payload.totalPages
+          ? { ...state.totalPages, ...action.payload.totalPages }
+          : state.totalPages,
       };
     case actions.update_visibile_tests:
       return {
@@ -52,7 +66,7 @@ const testReducer = (state, action) => {
       };
 
     case actions.reset:
-      return { ...intialState, tests: state.tests, test: action.payload.test };
+      return { ...state, tests: state.tests, test: action.payload.test };
     case actions.restart_test:
     default:
       return state;
