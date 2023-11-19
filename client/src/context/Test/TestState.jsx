@@ -8,15 +8,16 @@ export const actions = {
   reset: "RESET",
   save_tests: "SAVE_TESTS",
   update_test: "UPDATE_TEST",
-  restart_test: "RESTART_TEST",
-  update_tests: "UPDATE_TESTS",
+  save_latest: "LATEST_TEST",
+  save_mytest: "SAVE_MYTEST",
+  update_visibile_tests: "UPDATE_VISIBLE_TESTS",
 };
 const intialState = {
-  chosenOptions: [],
-  correctOptions: [],
-  showSolution: false,
   test: null,
   tests: [],
+  latest: [],
+  myTest: [],
+  visibleTests: [],
 };
 const testReducer = (state, action) => {
   console.log(action);
@@ -25,34 +26,34 @@ const testReducer = (state, action) => {
       return {
         ...state,
         tests: action.payload.tests,
+        visibleTests: action.payload.visibleTest,
+      };
+    case actions.save_latest:
+      return {
+        ...state,
+        latest: action.payload.tests,
+        visibleTests: action.payload.visibleTest,
+      };
+    case actions.save_mytest:
+      return {
+        ...state,
+        myTest: action.payload.tests,
+        visibleTests: action.payload.visibleTest,
+      };
+    case actions.update_visibile_tests:
+      return {
+        ...state,
+        visibleTests: action.payload,
       };
     case actions.update_tests:
       return {
         ...state,
         tests: [...state.tests, action.payload.test],
       };
-    case actions.submit_test:
-      return {
-        ...state,
-        chosenOptions: action.payload.chosenOptions,
-        correctOptions: action.payload.correctOptions,
-        test: action.payload.data,
-        showSolution: false,
-      };
-    case actions.show_solution:
-      return {
-        ...state,
-        showSolution: true,
-      };
+
     case actions.reset:
       return { ...intialState, tests: state.tests, test: action.payload.test };
     case actions.restart_test:
-      return {
-        ...state,
-        chosenOptions: [],
-        correctOptions: [],
-        showSolution: false,
-      };
     default:
       return state;
   }

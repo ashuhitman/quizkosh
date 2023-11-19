@@ -4,7 +4,17 @@ GET http://127.0.0.1:8000/
 ### Get all tests
 GET http://127.0.0.1:8000/tests
 
-### Get a test by id
+### Get all latest tests
+GET http://127.0.0.1:8000/tests/latest
+
+### Get all latest tests
+POST http://127.0.0.1:8000/tests
+
+{
+    "id":"6553e48e1a23893b9d272d12"
+}
+
+### Get a test by user id
 GET http://127.0.0.1:8000/tests/7514843bd5f73b9e7ed385ba
 
 ### crate a test

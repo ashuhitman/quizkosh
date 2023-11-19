@@ -21,8 +21,8 @@ POST http://127.0.0.1:8000/auth/login
 Content-Type: application/json
 
 {
-    "email": "ashu83066@gmail.com",
-    "password": "123456"
+    "email": "ashu8306@gmail.com",
+    "password": "12345"
 }
 
 ### token

@@ -4,10 +4,11 @@ import { Link } from "react-router-dom";
 import styles from "./Header.module.css"; // Import your CSS file for styling
 import Modal from "../Modal/Modal";
 import axios from "axios";
-import { useAuth } from "../../context/Auth/AuthState";
+import { MdAddCircle } from "react-icons/md";
 
 function Header({ home, showAlert }) {
   const [modal, setModal] = useState(false);
+
   const closeModal = () => setModal(!modal);
 
   const handleClick = (e) => {
@@ -23,7 +24,7 @@ function Header({ home, showAlert }) {
         {!home && (
           <div>
             <Link className={styles.link} onClick={handleClick}>
-              Create Test
+              <MdAddCircle size="25" />
             </Link>
           </div>
         )}
