@@ -1,14 +1,8 @@
-import React, { useState } from "react";
+import React, { Children, useState } from "react";
 import { Link } from "react-router-dom";
 
 import styles from "./Header.module.css"; // Import your CSS file for styling
-import Modal from "../Modal/Modal";
-import axios from "axios";
-import { MdAddCircle } from "react-icons/md";
-
-function Header({ home, showAlert }) {
-  const [modal, setModal] = useState(false);
-
+function Header({ home, showAlert, children }) {
   const closeModal = () => setModal(!modal);
 
   const handleClick = (e) => {
@@ -18,16 +12,11 @@ function Header({ home, showAlert }) {
 
   return (
     <div className={styles.navbar}>
-      <Modal closeModal={closeModal} modal={modal} />
-      <div className={styles.logo}>QuizKosh</div>
+      <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+        <div className={styles.logo}>QuizKosh</div>
+      </Link>
       <div className={styles.links}>
-        {!home && (
-          <div>
-            <Link className={styles.link} onClick={handleClick}>
-              <MdAddCircle size="25" />
-            </Link>
-          </div>
-        )}
+        {children}
         {home ? (
           <div>
             <Link to="/auth" className={styles.link}>
@@ -42,7 +31,7 @@ function Header({ home, showAlert }) {
               style={{
                 backgroundColor: "inherit",
                 color: "white",
-                cursor: "pointer",
+                padding: "0px",
               }}
               onClick={() => showAlert(true)}
             >

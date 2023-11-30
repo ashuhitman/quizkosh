@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from "./Modal.module.css";
 import Button from "../Button/Button";
 import OptionField from "../OptionField/OptionField";
@@ -8,34 +8,37 @@ import axios from "axios";
 import { API_ENDPOINTS, MIN_QUESTION } from "../../utils/constants";
 import Loader from "../Loader/Loader";
 import { useAuth } from "../../context/Auth/AuthState";
+import TestContext from "../../context/Test/TestContext";
+import { actions } from "../../context/Test/TestState";
 
-function Modal({ closeModal, modal }) {
+function Modal({ leftFun, rightFun, modal, mode = "add" }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { login, logout, isValidToken, token } = useAuth();
+  const { testState, dispatch } = useContext(TestContext);
   // form values
   const [formValues, setFormValues] = useState({
     testName: "",
     subject: "",
-    questionAmount: "",
+    pmarks: 1,
+    nmarks: 0,
     timer: "",
   });
   // form errors
   const [formErrors, setFormErrors] = useState({
     testName: "",
     subject: "",
-    questionAmount: "",
+    marks: "",
     timer: "",
   });
-  const [options, setOptions] = useState([
-    { label: "Select Timer", value: "0" },
-  ]);
 
   const submitFun = (e) => {
     e.preventDefault();
 
     const [isSubmit, errors] = validation(formValues);
     if (isSubmit) {
+      console.log(formValues);
+
       // show loader
       setIsLoading(true);
       // add test info to database
@@ -48,10 +51,13 @@ function Modal({ closeModal, modal }) {
           },
         })
         .then((response) => {
-          const testData = response.data.data;
-          console.log("API Response:", testData);
+          const test = response.data.data;
+          console.log("API Response:", test);
 
-          navigate("/tests/create", { state: { testData } });
+          // save data locally
+          localStorage.setItem("test", JSON.stringify(test));
+          // navigate to create test page
+          navigate("/tests/create");
         })
         .catch((error) => {
           console.error("Error", error);
@@ -64,27 +70,13 @@ function Modal({ closeModal, modal }) {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormErrors({ ...formErrors, [name]: "" });
-    const optionItem = [{ label: "Select Timer", value: "0" }];
-    if (name === "questionAmount") {
-      // update timer field on change question amount field
-      if (value >= MIN_QUESTION) {
-        for (let i = 0.5; i <= 3; i = i + 0.5) {
-          let val = Math.floor((value * i) / 5) * 5;
-          if (val !== 0) {
-            optionItem.push({ value: val, label: val + " minutes" });
-          }
-        }
-      }
-      setOptions(optionItem);
-    }
-    console.log(e.target.value);
     setFormValues({ ...formValues, [name]: value });
   };
 
   if (!modal) return <></>;
   return (
     <div className={styles.modal}>
-      <div className={styles.overlay} onClick={closeModal}></div>
+      <div className={styles.overlay} onClick={leftFun}></div>
       <div
         className={`${styles["modal-content"]} ${modal && styles.showModal}`}
       >
@@ -114,21 +106,41 @@ function Modal({ closeModal, modal }) {
               <p className={styles.error}>{formErrors.subject}</p>
             </div>
             <div className={styles["form-group"]}>
-              <input
-                type="number"
-                placeholder="Number of questions"
-                name="questionAmount"
-                onChange={handleInputChange}
-                min="10"
-              />
-              <p className={styles.error}>{formErrors.questionAmount}</p>
+              <div className={styles["marks-container"]}>
+                <div className={styles.marks}>
+                  <label htmlFor="pmarks">Positive Marks</label>
+                  <input
+                    type="number"
+                    value={formValues.pmarks}
+                    id="pmarks"
+                    name="pmarks"
+                    min={0.5}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className={styles.marks}>
+                  <label htmlFor="nmarks">Negative marks</label>
+                  <input
+                    type="number"
+                    value={formValues.nmarks}
+                    id="nmarks"
+                    name="nmarks"
+                    min={0}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              <p className={styles.error}>{formErrors.marks}</p>
             </div>
             <div className={styles["form-group"]}>
-              <OptionField
-                options={options}
+              <input
+                type="number"
+                name="timer"
                 onChange={handleInputChange}
-                error={formErrors.timer}
+                value={formValues.timer}
+                placeholder="Test time in minutes (eg. 6)"
               />
+              <p className={styles.error}>{formErrors.timer}</p>
             </div>
             <div className={styles["form-footer"]}>
               <Button
@@ -137,13 +149,13 @@ function Modal({ closeModal, modal }) {
                 ph="8px"
                 py="5px"
                 radius="2px"
-                clickFun={closeModal}
+                clickFun={leftFun}
               />
               {}
               <span style={{ margin: "0 10px" }} />
               <Button
                 type="submit"
-                text="Create"
+                text={mode == "add" ? "Create" : "Update"}
                 ph="8px"
                 py="5px"
                 radius="2px"

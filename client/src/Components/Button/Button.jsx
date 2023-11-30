@@ -16,6 +16,7 @@ function Button({
   fontSize,
   clickFun = () => {},
   disabled,
+  children,
 }) {
   const btnStyle = {
     fontSize: fontSize,
@@ -37,8 +38,9 @@ function Button({
       type={type}
       style={btnStyle}
       className={disabled ? "disabled-button" : ""}
-      onClick={clickFun}
+      onClick={!disabled ? clickFun : undefined}
     >
+      {children}
       {text}
     </button>
   );

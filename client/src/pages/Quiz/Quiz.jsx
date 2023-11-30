@@ -103,7 +103,7 @@ function Quiz() {
     start();
     // get local storage data
     const localData = JSON.parse(
-      localStorage.getItem(docId) || JSON.stringify(quizintialState)
+      localStorage.getItem("testState") || JSON.stringify(quizintialState)
     );
 
     if (!_.isEqual(localData, quizintialState)) {
@@ -145,7 +145,7 @@ function Quiz() {
   const saveStateToLocalStorage = (state) => {
     // store local state on state change
     if (Object.keys(state).length !== 0) {
-      localStorage.setItem(docId, JSON.stringify(state));
+      localStorage.setItem("testState", JSON.stringify(state));
     }
   };
 

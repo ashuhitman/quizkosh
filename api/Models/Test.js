@@ -14,7 +14,24 @@ const testSchema = mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   testName: { type: String, required: true, trim: true },
   subject: { type: String, required: true, trim: true },
-  questionAmount: { type: Number, required: true },
+  pmarks: {
+    type: Number,
+    required: true,
+    default: 1,
+    validate: {
+      validator: Number.isInteger,
+      message: "{VALUE} is not an integer value",
+    },
+  },
+  nmarks: {
+    type: Number,
+    required: true,
+    default: 0,
+    validate: {
+      validator: Number.isInteger,
+      message: "{VALUE} is not an integer value",
+    },
+  },
   timer: { type: String, required: true, trim: true },
   questions: [questionSchema],
   createdAt: { type: Date, immutable: true, default: Date.now },

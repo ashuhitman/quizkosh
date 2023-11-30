@@ -23,6 +23,11 @@ const intialState = {
     latest: 0,
     mytest: 0,
   },
+  pageSize: /iphone|ipod|android|ie|blackberry|fennec/.test(
+    navigator.userAgent.toLowerCase()
+  )
+    ? 6
+    : 12,
 };
 const testReducer = (state, action) => {
   console.log(action);

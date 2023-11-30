@@ -38,17 +38,17 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://127.0.0.1:8000/tests/650ae323204e4e0860e5dcc8
+DELETE http://127.0.0.1:8000/tests/65557db1aff8809c5bd38fee
 
 ### get all questions
 GET http://127.0.0.1:8000/questions/6514843bd5f73b9e7ed385ba
 
 ### append questions
-POST http://127.0.0.1:8000/questions/add/6515f7c1e5ae3fde588d1650
+PUT http://127.0.0.1:8000/questions/append/6514843bd5f73b9e7ed385ba
 Content-Type: application/json
 
 {
-    "question": "What is formula of sulphric acid?",
+    "question": "What is formula of sulphric acid base65644343?",
     "options": [
     { "text": "H2SO4", "isAnswer": true },
     { "text": "H20", "isAnswer": false },
@@ -56,6 +56,19 @@ Content-Type: application/json
     { "text": "H2S03", "isAnswer": false }]
 }
 
+### append questions
+PUT http://127.0.0.1:8000/questions/update/6514843bd5f73b9e7ed385ba
+Content-Type: application/json
+
+{
+     "_id": "6568e16f69ad4139ca98d5bf",
+    "question": "What is formula of sulphric acid?",
+    "options": [
+    { "text": "H2SO4", "isAnswer": true },
+    { "text": "H20", "isAnswer": false },
+    { "text": "HN03", "isAnswer": false },
+    { "text": "H2S03", "isAnswer": false }]
+}
 ### append  many questions
 POST http://127.0.0.1:8000/questions/add/6515f7c1e5ae3fde588d1650
 Content-Type: application/json

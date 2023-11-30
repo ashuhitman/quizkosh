@@ -119,24 +119,32 @@ router.get("/:id", async (req, res) => {
 // add test
 router.post("/create", authentication, async (req, res) => {
   try {
+    console.log(req.body);
     req.body.user = req.user._id;
     const test = Test(req.body);
     const result = await test.save();
-    res.status(200).send({ success: "added succesfully", data: result });
+    if (test) {
+      res.status(200).send({ success: "added succesfully", data: result });
+    } else {
+      res.status(404).send({ error: "test creation failed" });
+    }
   } catch (error) {
-    res.send({ error: error.message });
+    res.status(404).send({ error: error.message });
   }
 });
 
 // delete test
-router.delete("/:id", authentication, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
+    console.log("running", req.params["id"]);
     const result = await Test.findByIdAndDelete(req.params["id"]);
-    if (result === null) return res.send({ error: "Id not found" });
+    console.log("result: ", result);
+    if (result === null) return res.status(404).send({ error: "Id not found" });
 
-    return res.send({ success: "deleted succesfully" });
+    return res.status(200).send({ success: "deleted succesfully" });
   } catch (error) {
-    res.send({ error: error.message });
+    console.log("error", error.message);
+    res.status(404).send({ error: error.message });
   }
 });
 

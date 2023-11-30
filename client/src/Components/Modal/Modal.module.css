@@ -34,9 +34,6 @@
     top: 40%;
   }
 }
-.showModal {
-  /* top: 50%; */
-}
 
 .modal-body {
   display: flex;
@@ -63,6 +60,19 @@
   flex: 1;
   padding: 10px 10px;
   border: none;
+}
+.form-group > .marks-container {
+  display: flex;
+}
+.marks {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+.marks input {
+  margin-right: 8px;
+  margin-top: 6px;
 }
 .error {
   color: red;

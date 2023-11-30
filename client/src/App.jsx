@@ -7,6 +7,7 @@ import ScorePage from "./pages/ScorePage/ScorePage";
 import QuizState from "./context/Test/TestState";
 import Auth from "./pages/Auth/Auth";
 import { AuthState } from "./context/Auth/AuthState";
+import CreateTest from "./pages/CreateTest/CreateTest";
 
 function App() {
   const routes = [
@@ -17,7 +18,12 @@ function App() {
     },
     {
       path: "/tests/create",
-      element: <TestPage />,
+      element: <CreateTest />,
+      requiresAuth: false,
+    },
+    {
+      path: "/tests/edit",
+      element: <CreateTest mode="edit" />,
       requiresAuth: false,
     },
     {

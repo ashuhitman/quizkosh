@@ -56,17 +56,17 @@ const validation = (values) => {
     isSubmit = false;
   }
 
-  if (!values.questionAmount) {
-    errors.questionAmount = "Number of questions is required";
-    isSubmit = false;
-  } else if (values.questionAmount < MIN_QUESTION) {
-    errors.questionAmount =
-      "Number of questions must be greater than or equal to ${MIN_QUESTION}";
-    isSubmit = false;
-  }
+  // if (!values.pmarks) {
+  //   errors.marks = "Enter the positive marks";
+  //   isSubmit = false;
+  // }
+  // if (values.nmarks) {
+  //   errors.questionAmount = "Enter the +ve/-ve marks per question";
+  //   isSubmit = false;
+  // }
 
   if (values.timer === "0" || !values.timer.trim()) {
-    errors.timer = "Select a timer";
+    errors.timer = "Enter the timer value in minutes";
     isSubmit = false;
   }
   return [isSubmit, errors];

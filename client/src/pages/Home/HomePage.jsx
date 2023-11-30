@@ -13,18 +13,22 @@ import { useAuth } from "../../context/Auth/AuthState";
 import { parseJwt } from "../../utils/parsejwt";
 import Alert from "../../Components/Alert/Alert";
 import useFetch from "../../Hooks/useFetch";
+import { Link } from "react-router-dom";
+import { MdAddCircle } from "react-icons/md";
+import Modal from "../../Components/Modal/Modal";
 
 function HomePage() {
   // test context
   const { testState, dispatch } = useContext(TestContext);
   const { login, logout, isValidToken, token, user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState(false);
 
   const [visibleTest, setVisibleTest] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = testState.totalPages;
-  const [tests, setTests] = useState([]);
+
   console.log("homepage: ", testState, totalPages, currentPage);
 
   // console.log(tests);
@@ -101,11 +105,7 @@ function HomePage() {
 
   const fetchActiveTestData = () => {
     // check if mobile
-    const pageSize = /iphone|ipod|android|ie|blackberry|fennec/.test(
-      navigator.userAgent.toLowerCase()
-    )
-      ? 6
-      : 12;
+    const pageSize = testState.pageSize;
     if (visibleTest === 0) {
       console.log(testState.tests.length);
       if (
@@ -178,13 +178,30 @@ function HomePage() {
     }
     return false;
   };
+
+  const clearStorage = (array) => {
+    for (let i = 0; i < array.length; i++) {
+      localStorage.removeItem(array[i]);
+    }
+  };
+  useEffect(() => {
+    const clearFields = ["test", "time", "active", "testState"];
+    clearStorage(clearFields);
+  }, []);
   useEffect(() => {
     fetchActiveTestData();
   }, [visibleTest, currentPage]);
 
   return (
     <div className="container">
-      <Header home={!isValidToken} showAlert={setShowAlert} />
+      <Modal leftFun={() => setModal(false)} modal={modal} />
+      <Header home={!isValidToken} showAlert={setShowAlert}>
+        {isValidToken && (
+          <div onClick={() => setModal(true)} style={{ cursor: "pointer" }}>
+            <MdAddCircle size="25" />
+          </div>
+        )}
+      </Header>
       <Alert
         show={showAlert}
         showHandler={setShowAlert}
@@ -228,12 +245,14 @@ function HomePage() {
                   cardData={test}
                   disabled={true}
                   user={visibleTest === 2 && user}
+                  currentPage={currentPage}
                 />
               ) : (
                 <TestCard
                   key={index}
                   cardData={test}
                   user={visibleTest == 2 && user}
+                  currentPage={currentPage}
                 />
               )
             )}
