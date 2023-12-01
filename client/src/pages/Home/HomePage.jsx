@@ -4,7 +4,7 @@ import "./HomePage.css";
 import Header from "../../Components/Header/Header";
 import TestCard from "../../Components/TestCard/TestCard";
 import axios from "axios";
-import { API_ENDPOINTS } from "../../utils/constants";
+import { API_ENDPOINTS, subjects } from "../../utils/constants";
 import HomePageLoader from "../../Components/HomePageLoader/HomePageLoader";
 import TestContext from "../../context/Test/TestContext";
 import { actions } from "../../context/Test/TestState";
@@ -16,6 +16,8 @@ import useFetch from "../../Hooks/useFetch";
 import { Link } from "react-router-dom";
 import { MdAddCircle } from "react-icons/md";
 import Modal from "../../Components/Modal/Modal";
+import { FaFilter } from "react-icons/fa";
+import Dropdown from "../../Components/Dropdown/Dropdown";
 
 function HomePage() {
   // test context
@@ -232,6 +234,10 @@ function HomePage() {
             My Test
           </button>
         )}
+
+        <Dropdown style={{ marginLeft: "auto" }} options={subjects}>
+          <FaFilter color="#2c3e50" />
+        </Dropdown>
       </div>
       <div className="outer-test-container">
         {loading ? (

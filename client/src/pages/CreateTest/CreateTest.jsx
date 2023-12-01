@@ -286,11 +286,11 @@ function CreateTest({ mode = "add" }) {
         axios.defaults.withCredentials = true;
         const result = await axios.put(url, data);
         data = result.data.data;
-        // handleShowAlert(true, "Question updates", "#def0d8", "#49754b");
+        handleShowAlert(true, "Question updates", "#def0d8", "#49754b");
       }
     } catch (error) {
       console.log("error", error);
-      // handleShowAlert(true, error.response.data.error);
+      handleShowAlert(true, error.response.data.error);
     }
   };
 

@@ -25,3 +25,17 @@ export const AUTH_API_ENDPOINTS = {
 
 export const MIN_QUESTION = 2;
 export const TEXT_LENGTH = 5;
+
+export const subjects = [
+  "Maths",
+  "Physics",
+  "Science",
+  "Chemistry",
+  "Biology",
+  "Current Affairs",
+  "GK",
+  "History",
+  "Polity",
+  "Geology",
+  "Economics",
+];
