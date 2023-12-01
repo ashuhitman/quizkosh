@@ -15,7 +15,7 @@ const Dropdown = ({
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  console.log("dropwdown: ", selectedOptions);
+
   const handleOptionClick = (option) => {
     const selectedIndex = selectedOptions.indexOf(option);
     let newSelectedOptions = [];
@@ -26,7 +26,6 @@ const Dropdown = ({
       newSelectedOptions = selectedOptions.filter((item) => item !== option);
     }
 
-    console.log(selectedIndex, newSelectedOptions);
     onOptionSelect(newSelectedOptions); // Pass selected options to parent component if needed
   };
   const handleClickOutside = (event) => {
