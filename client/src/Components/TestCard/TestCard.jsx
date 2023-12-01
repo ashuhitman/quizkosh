@@ -15,7 +15,7 @@ function TestCard({ cardData, disabled, currentPage, user }) {
   const navigate = useNavigate();
   const { _id, testName, timer, questionAmount, subject, questions } = cardData;
   const { testState, dispatch } = useContext(TestContext);
-  console.log(testState);
+
   const { login, logout, isValidToken, token, _ } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
   useEffect(() => {}, []);
@@ -29,7 +29,7 @@ function TestCard({ cardData, disabled, currentPage, user }) {
 
     // save current test to local storage
     localStorage.setItem("test", JSON.stringify(data));
-    console.log("data", data);
+
     // set test state
     dispatch({ type: actions.reset, payload: { test: data } });
     // goto quiz page
@@ -83,7 +83,6 @@ function TestCard({ cardData, disabled, currentPage, user }) {
             <div
               className={styles.circle}
               onClick={() => {
-                console.log("edit clciked");
                 localStorage.setItem("test", JSON.stringify(cardData));
                 navigate("/tests/edit");
               }}

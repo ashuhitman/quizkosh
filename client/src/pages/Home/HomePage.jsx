@@ -29,9 +29,9 @@ function HomePage() {
   const [visibleTest, setVisibleTest] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOptions, onOptionSelect] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const totalPages = testState.totalPages;
-
-  console.log("homepage: ", testState, totalPages, currentPage);
 
   // console.log(tests);
   const goToPreviousPage = () => {
@@ -53,13 +53,11 @@ function HomePage() {
         ? totalPages.latest
         : totalPages.mytest;
     if (currentPage < totalPage) {
-      console.log("next clicked");
       setCurrentPage(currentPage + 1);
     }
   };
 
   const fetchData = async (url, action) => {
-    console.log("fetching tests ...");
     setLoading(true);
 
     try {
@@ -109,7 +107,6 @@ function HomePage() {
     // check if mobile
     const pageSize = testState.pageSize;
     if (visibleTest === 0) {
-      console.log(testState.tests.length);
       if (
         testState.tests[currentPage - 1] &&
         testState.tests[currentPage - 1].length > 0
@@ -235,7 +232,13 @@ function HomePage() {
           </button>
         )}
 
-        <Dropdown style={{ marginLeft: "auto" }} options={subjects}>
+        <Dropdown
+          style={{ marginLeft: "auto" }}
+          options={subjects}
+          onSearchTerm={setSearchTerm}
+          selectedOptions={selectedOptions}
+          onOptionSelect={onOptionSelect}
+        >
           <FaFilter color="#2c3e50" />
         </Dropdown>
       </div>
@@ -244,24 +247,39 @@ function HomePage() {
           <HomePageLoader />
         ) : (
           <div className="test-container">
-            {testState.visibleTests.map((test, index) =>
-              test.questions.length === 0 ? (
-                <TestCard
-                  key={index}
-                  cardData={test}
-                  disabled={true}
-                  user={visibleTest === 2 && user}
-                  currentPage={currentPage}
-                />
-              ) : (
-                <TestCard
-                  key={index}
-                  cardData={test}
-                  user={visibleTest == 2 && user}
-                  currentPage={currentPage}
-                />
-              )
-            )}
+            {testState.visibleTests
+              .filter((item) => {
+                if (selectedOptions.length === 0) return true;
+                if (selectedOptions.includes(item.subject.toLowerCase()))
+                  return true;
+                return false;
+              })
+              .filter((item) => {
+                if (searchTerm.length === 0) return true;
+                if (
+                  item.subject.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                  return true;
+                return false;
+              })
+              .map((test, index) =>
+                test.questions.length === 0 ? (
+                  <TestCard
+                    key={index}
+                    cardData={test}
+                    disabled={true}
+                    user={visibleTest === 2 && user}
+                    currentPage={currentPage}
+                  />
+                ) : (
+                  <TestCard
+                    key={index}
+                    cardData={test}
+                    user={visibleTest == 2 && user}
+                    currentPage={currentPage}
+                  />
+                )
+              )}
           </div>
         )}
         <Pagination
