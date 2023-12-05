@@ -1,13 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/Home/HomePage";
-import TestPage from "./pages/TestPage/TestPage";
 import Quiz from "./pages/Quiz/Quiz";
-import ScorePage from "./pages/ScorePage/ScorePage";
+
 import QuizState from "./context/Test/TestState";
 import Auth from "./pages/Auth/Auth";
 import { AuthState } from "./context/Auth/AuthState";
 import CreateTest from "./pages/CreateTest/CreateTest";
+import Profile from "./pages/Profile/Profile";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   const routes = [
@@ -17,9 +18,14 @@ function App() {
       requiresAuth: false,
     },
     {
+      path: "/user/profile",
+      element: <Profile />,
+      requiresAuth: true,
+    },
+    {
       path: "/tests/create",
       element: <CreateTest />,
-      requiresAuth: false,
+      requiresAuth: true,
     },
     {
       path: "/tests/edit",
@@ -31,11 +37,7 @@ function App() {
       element: <Quiz />,
       requiresAuth: false,
     },
-    {
-      path: "/tests/:docId/result",
-      element: <ScorePage />,
-      requiresAuth: false,
-    },
+
     {
       path: "/auth",
       element: <Auth />,
@@ -47,13 +49,27 @@ function App() {
       <AuthState>
         <BrowserRouter>
           <Routes>
-            {routes.map((route, index) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
+            {routes.map((route, index) => {
+              if (route.requiresAuth) {
+                return (
+                  <Route key={route.path} element={<ProtectedRoute />}>
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={route.element}
+                    />
+                  </Route>
+                );
+              } else {
+                return (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                );
+              }
+            })}
           </Routes>
         </BrowserRouter>
       </AuthState>

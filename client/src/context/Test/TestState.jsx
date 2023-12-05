@@ -19,15 +19,20 @@ const intialState = {
   myTest: [],
   visibleTests: [],
   totalPages: {
-    alltests: 0,
-    latest: 0,
-    mytest: 0,
+    alltests: 1,
+    latest: 1,
+    mytest: 1,
   },
   pageSize: /iphone|ipod|android|ie|blackberry|fennec/.test(
     navigator.userAgent.toLowerCase()
   )
     ? 6
     : 12,
+  mobile: /iphone|ipod|android|ie|blackberry|fennec/.test(
+    navigator.userAgent.toLowerCase()
+  )
+    ? true
+    : false,
 };
 const testReducer = (state, action) => {
   console.log(action);

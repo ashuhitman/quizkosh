@@ -1,5 +1,5 @@
 .modal {
-  z-index: 2;
+  z-index: 6;
 }
 .modal,
 .overlay {
@@ -23,15 +23,15 @@
   transform: translate(-50%, -50%);
   line-height: 1.4;
   background: #f1f1f1;
-  border-radius: 3px;
-  width: min(400px, 70%);
+  border-radius: 6px;
+  width: min(350px, 70%);
   color: black;
   padding: 20px 30px;
   animation: slide 0.5s forwards;
 }
 @keyframes slide {
   100% {
-    top: 40%;
+    top: 50%;
   }
 }
 
@@ -52,8 +52,23 @@
   flex-direction: column;
 }
 .modal-body > form > .form-footer {
-  align-self: center;
+  align-self: flex-end;
   margin-top: 20px;
+}
+.modal-body button:last-child {
+  background-color: #2c3e50 !important;
+  color: #f1f1f1 !important;
+  padding: 10px 15px !important;
+  border-radius: 6px !important;
+  border: 1px solid #2c3e50 !important;
+  font-weight: bold;
+}
+.modal-body button:first-child {
+  border: 1px solid #2c3e50 !important;
+  color: #2c3e50 !important;
+  padding: 10px 15px !important;
+  border-radius: 6px !important;
+  font-weight: bold;
 }
 
 .form-group input {
@@ -63,16 +78,23 @@
 }
 .form-group > .marks-container {
   display: flex;
+  flex: 1;
+  border: 1px solid blue;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 .marks {
   flex: 1;
-
   display: flex;
   flex-direction: column;
+  border: 1px solid red;
+  margin-right: 10px;
 }
+
 .marks input {
-  margin-right: 8px;
   margin-top: 6px;
+  border: 1px solid green;
+  width: 100%;
 }
 .error {
   color: red;

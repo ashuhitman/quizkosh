@@ -10,7 +10,7 @@ import { AUTH_API_ENDPOINTS } from "../../utils/constants";
 import Loader from "../../Components/Loader/Loader";
 
 function Login({ handleShowAlert, loading, setLoading }) {
-  const { login, logout, isValidToken } = useAuth();
+  const { login, logout, user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -60,10 +60,10 @@ function Login({ handleShowAlert, loading, setLoading }) {
     }
   };
   useEffect(() => {
-    if (isValidToken) {
+    if (user) {
       navigate("/");
     }
-  }, [isValidToken]);
+  }, [user]);
   return (
     <div className={styles.loginContainer}>
       <form className={styles.loginForm} onSubmit={submit}>

@@ -4,8 +4,8 @@
 }
 
 .filter-text {
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 25px;
+  padding-right: 25px;
   display: flex;
   align-items: center;
   color: white;
@@ -15,10 +15,10 @@
 }
 .filter-text button {
   border: none;
-  padding: 10px 5px;
+  padding: 6px 5px;
   background-color: inherit;
   cursor: pointer;
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid inherit;
 }
 .filter-text button:hover {
   color: #2b3d4e;

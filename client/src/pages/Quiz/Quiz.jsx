@@ -497,9 +497,11 @@ function Quiz() {
           </div>
           <div className={styles.footer}>
             <button onClick={onPrevious}>Previous</button>
-            <button onClick={clearResponse}>
-              Clear <span className={styles.clear}>Response</span>
-            </button>
+            {!quizState.showSolution && (
+              <button onClick={clearResponse}>
+                Clear <span className={styles.clear}>Response</span>
+              </button>
+            )}
             {/* {testState.showSolution && <div>Re-attempt Questions</div>} */}
             <button onClick={onNext}>Save & Next</button>
           </div>

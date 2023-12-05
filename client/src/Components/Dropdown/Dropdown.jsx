@@ -26,7 +26,7 @@ const Dropdown = ({
       newSelectedOptions = selectedOptions.filter((item) => item !== option);
     }
 
-    onOptionSelect(newSelectedOptions); // Pass selected options to parent component if needed
+    onOptionSelect(newSelectedOptions);
   };
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

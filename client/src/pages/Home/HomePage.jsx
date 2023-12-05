@@ -22,9 +22,10 @@ import Dropdown from "../../Components/Dropdown/Dropdown";
 function HomePage() {
   // test context
   const { testState, dispatch } = useContext(TestContext);
-  const { login, logout, isValidToken, token, user } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
+  // console.log("testState", testState);
 
   const [visibleTest, setVisibleTest] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
@@ -35,12 +36,6 @@ function HomePage() {
 
   // console.log(tests);
   const goToPreviousPage = () => {
-    const totalPage =
-      visibleTest === 0
-        ? totalPages.alltests
-        : visibleTest === 1
-        ? totalPages.latest
-        : totalPages.mytest;
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
@@ -63,10 +58,7 @@ function HomePage() {
     try {
       axios.defaults.withCredentials = true;
 
-      const response =
-        action === 2
-          ? await axios.post(url, { id: user._id })
-          : await axios.get(url);
+      const response = await axios.get(url);
 
       let data;
       let actionType;
@@ -138,22 +130,6 @@ function HomePage() {
         `${API_ENDPOINTS.TESTS}/latest?page=${currentPage}&pageSize=${pageSize}`,
         1
       );
-    } else if (visibleTest === 2) {
-      if (
-        testState.myTest[currentPage - 1] &&
-        testState.myTest[currentPage - 1].length > 0
-      ) {
-        dispatch({
-          type: actions.update_visibile_tests,
-          payload: testState.myTest[currentPage - 1],
-        });
-        setLoading(false);
-        return;
-      }
-      fetchData(
-        `${API_ENDPOINTS.TESTS}?page=${currentPage}&pageSize=${pageSize}`,
-        2
-      );
     }
   };
 
@@ -164,27 +140,19 @@ function HomePage() {
     }
   };
 
-  const logoutUser = async () => {
-    if (await logout()) {
-      const data = testState.tests[0] ? testState.tests[0] : [];
-      setVisibleTest(0);
-      setCurrentPage(1);
-      // dispatch({
-      //   type: actions.save_mytest,
-      //   payload: { tests: [], visibleTest: data },
-      // });
-      return true;
-    }
-    return false;
-  };
-
   const clearStorage = (array) => {
     for (let i = 0; i < array.length; i++) {
       localStorage.removeItem(array[i]);
     }
   };
   useEffect(() => {
-    const clearFields = ["test", "time", "active", "testState"];
+    const clearFields = [
+      "test",
+      "time",
+      "active",
+      "testState",
+      "protectedRouteVisited",
+    ];
     clearStorage(clearFields);
   }, []);
   useEffect(() => {
@@ -194,22 +162,17 @@ function HomePage() {
   return (
     <div className="container">
       <Modal leftFun={() => setModal(false)} modal={modal} />
-      <Header home={!isValidToken} showAlert={setShowAlert}>
-        {isValidToken && (
-          <div onClick={() => setModal(true)} style={{ cursor: "pointer" }}>
-            <MdAddCircle size="25" />
-          </div>
+
+      <Header showAlert={setShowAlert}>
+        {user && (
+          <MdAddCircle
+            size="23"
+            onClick={() => setModal(true)}
+            style={{ cursor: "pointer" }}
+          />
         )}
       </Header>
-      <Alert
-        show={showAlert}
-        showHandler={setShowAlert}
-        title="Logout"
-        body="Are you sure?"
-        leftText="Yes"
-        handleLeft={logoutUser}
-        rightText="No"
-      />
+
       <div className="filter-text">
         <button
           className={visibleTest === 0 ? "active-filter" : ""}
@@ -223,14 +186,6 @@ function HomePage() {
         >
           Latest
         </button>
-        {isValidToken && (
-          <button
-            className={visibleTest === 2 ? "active-filter" : ""}
-            onClick={() => setActiveTest(2)}
-          >
-            My Test
-          </button>
-        )}
 
         <Dropdown
           style={{ marginLeft: "auto" }}
@@ -262,23 +217,16 @@ function HomePage() {
                   return true;
                 return false;
               })
-              .map((test, index) =>
-                test.questions.length === 0 ? (
-                  <TestCard
-                    key={index}
-                    cardData={test}
-                    disabled={true}
-                    user={visibleTest === 2 && user}
-                    currentPage={currentPage}
-                  />
-                ) : (
-                  <TestCard
-                    key={index}
-                    cardData={test}
-                    user={visibleTest == 2 && user}
-                    currentPage={currentPage}
-                  />
-                )
+              .map(
+                (test, index) =>
+                  test.questions.length !== 0 && (
+                    <TestCard
+                      key={index}
+                      cardData={test}
+                      user={visibleTest == 2 && user}
+                      currentPage={currentPage}
+                    />
+                  )
               )}
           </div>
         )}

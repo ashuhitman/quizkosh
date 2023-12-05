@@ -1,6 +1,13 @@
 import React from "react";
 
-const CircularComponent = ({ number, size, color, bgcolor }) => {
+const CircularComponent = ({
+  number,
+  size,
+  color,
+  bgcolor,
+  children,
+  onClick = () => {},
+}) => {
   // Style object to define the circle's appearance
   const circleStyle = {
     width: `${size}px`,
@@ -9,12 +16,15 @@ const CircularComponent = ({ number, size, color, bgcolor }) => {
     borderRadius: "50%",
     backgroundColor: bgcolor,
     color,
+    border: `2px solid ${color}`,
     textAlign: "center",
+    cursor: "pointer",
   };
 
   return (
-    <div className="circle" style={circleStyle}>
+    <div style={circleStyle} onClick={onClick}>
       {number}
+      {children}
     </div>
   );
 };

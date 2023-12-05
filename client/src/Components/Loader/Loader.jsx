@@ -5,7 +5,7 @@ function Loader({ size, borderWidth, borderColor }) {
   return (
     <span
       className={styles.spinner}
-      style={{ height: size, width: size, borderWidth }}
+      style={{ height: size, width: size, borderWidth, borderColor }}
     ></span>
   );
 }

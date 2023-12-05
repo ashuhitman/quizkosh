@@ -16,7 +16,6 @@ function TestCard({ cardData, disabled, currentPage, user }) {
   const { _id, testName, timer, questionAmount, subject, questions } = cardData;
   const { testState, dispatch } = useContext(TestContext);
 
-  const { login, logout, isValidToken, token, _ } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
   useEffect(() => {}, []);
   const goToQuizPage = () => {

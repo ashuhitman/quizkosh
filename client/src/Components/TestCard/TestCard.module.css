@@ -20,7 +20,7 @@
 .card-head {
   font-weight: bold;
   font-size: 1.1em;
-  border-bottom: 1px dashed black;
+  border-bottom: 1px solid #2c3e4f;
 }
 .card-body {
   flex: 1;

@@ -72,7 +72,8 @@ router.get("/latest", async (req, res) => {
 // fetch all tests
 router.post("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Get the requested page, default to 1
-  const pageSize = parseInt(req.query.pageSize) || 12; // Set a default page size
+  const pageSize = parseInt(req.query.pageSize) || 8; // Set a default page size
+  console.log("mytest", page, pageSize);
   try {
     const id = req.body.id;
     const userTestsCount = await Test.countDocuments({

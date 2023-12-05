@@ -1,0 +1,124 @@
+body {
+  background-color: #f0f2f5 !important;
+}
+.profile-container {
+  background-color: #f0f2f5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+.filter-header {
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  color: white;
+  gap: 20px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+}
+.filter-header > button {
+  border: none;
+  border-bottom: 2px solid inherit;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  background-color: inherit;
+  cursor: pointer;
+}
+.filter-item {
+  border-bottom: 2px solid #2c3e50 !important;
+}
+.user-data-container {
+  color: black;
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  margin: 20px;
+  gap: 20px;
+  overflow: hidden;
+}
+.personal-info {
+  /* margin: auto; */
+
+  width: min(300px, 90%);
+  padding: 15px 10px;
+  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.personal-info .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.personal-info .header button {
+  padding: 6px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.personal-info .header button:hover {
+  border: 1px solid black;
+}
+.personal-info .body {
+  max-height: 260px;
+
+  overflow-y: auto;
+}
+.personal-info .body > div {
+  border: 1px solid grey;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 4px;
+}
+.personal-info .footer {
+  flex: 1;
+}
+
+.personal-info .photo {
+  height: 100px;
+  width: 100px;
+  /* border-radius: 50%; */
+}
+.personal-info img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-test {
+  background-color: #fff;
+  flex: 1;
+  border-radius: 8px;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+}
+
+.profile-pagination {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  margin-top: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.profile-pagination > div {
+  flex: 0 0 auto;
+}
+.spacer {
+  flex: 1; /* Fills remaining space */
+}

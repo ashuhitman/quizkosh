@@ -9,19 +9,17 @@ import { API_ENDPOINTS, MIN_QUESTION } from "../../utils/constants";
 import Loader from "../Loader/Loader";
 import { useAuth } from "../../context/Auth/AuthState";
 import TestContext from "../../context/Test/TestContext";
-import { actions } from "../../context/Test/TestState";
 
 function Modal({ leftFun, rightFun, modal, mode = "add" }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { login, logout, isValidToken, token } = useAuth();
-  const { testState, dispatch } = useContext(TestContext);
+
   // form values
   const [formValues, setFormValues] = useState({
     testName: "",
     subject: "",
-    pmarks: 1,
-    nmarks: 0,
+    pmarks: "",
+    nmarks: "",
     timer: "",
   });
   // form errors
@@ -41,6 +39,8 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
 
       // show loader
       setIsLoading(true);
+      // get token
+      const token = localStorage.getItem("token");
       // add test info to database
 
       axios.defaults.withCredentials = true;
@@ -106,30 +106,28 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
               <p className={styles.error}>{formErrors.subject}</p>
             </div>
             <div className={styles["form-group"]}>
-              <div className={styles["marks-container"]}>
-                <div className={styles.marks}>
-                  <label htmlFor="pmarks">Positive Marks</label>
-                  <input
-                    type="number"
-                    value={formValues.pmarks}
-                    id="pmarks"
-                    name="pmarks"
-                    min={0.5}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className={styles.marks}>
-                  <label htmlFor="nmarks">Negative marks</label>
-                  <input
-                    type="number"
-                    value={formValues.nmarks}
-                    id="nmarks"
-                    name="nmarks"
-                    min={0}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
+              <input
+                type="number"
+                value={formValues.pmarks}
+                id="pmarks"
+                name="pmarks"
+                min={0.5}
+                onChange={handleInputChange}
+                placeholder="Positive marks per correct question"
+              />
+
+              <p className={styles.error}>{formErrors.marks}</p>
+            </div>
+            <div className={styles["form-group"]}>
+              <input
+                type="number"
+                value={formValues.nmarks}
+                id="nmarks"
+                name="nmarks"
+                min={0}
+                placeholder="Negative marks per wrong question"
+                onChange={handleInputChange}
+              />
               <p className={styles.error}>{formErrors.marks}</p>
             </div>
             <div className={styles["form-group"]}>

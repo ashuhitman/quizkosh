@@ -2,6 +2,7 @@ import React from "react";
 import "./Pagination.css";
 
 function Pagination({ page, totalPages, goToPrePage, goToNextPage }) {
+  if (totalPages === undefined || totalPages <= 1) return;
   return (
     <div className="pagination">
       <input
@@ -10,11 +11,11 @@ function Pagination({ page, totalPages, goToPrePage, goToNextPage }) {
         onClick={goToPrePage}
         disabled={page === 1}
       />
-      {totalPages > 0 && (
-        <p>
-          {page} of {totalPages}{" "}
-        </p>
-      )}
+
+      <p>
+        {page} of {totalPages}{" "}
+      </p>
+
       <input
         type="button"
         value="NEXT"
