@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { Route, Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../context/Auth/AuthState";
 import Loader from "../Loader/Loader";
-import styles from "./ProtectedRoute.module.css";
 
 const ProtectedRoute = () => {
   const { user, loading } = useAuth();
@@ -11,9 +10,16 @@ const ProtectedRoute = () => {
 
   if (loading) {
     return (
-      <div className={styles.overflow}>
-        <Loader size="30px" borderWidth="6px" />
-      </div>
+      <Loader
+        size="30px"
+        borderWidth="6px"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      />
     );
   }
 

@@ -15,8 +15,12 @@
   /* background-color: black; */
   padding: 5px 10px;
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+
   font-style: bold;
+}
+
+.logo:hover {
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
 }
 
 .logo > a {
@@ -25,7 +29,7 @@
 }
 .links {
   display: flex;
-  padding: 5px 10px;
+  padding: 5px 5px;
   align-items: center;
 }
 

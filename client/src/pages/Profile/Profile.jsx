@@ -18,11 +18,13 @@ import CircularComponent from "../../Components/CircularComponent/CircularCompon
 import { FcNext, FcPrevious } from "react-icons/fc";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import Modal from "../../Components/Modal/Modal";
+import Loader from "../../Components/Loader/Loader";
 
 function Profile() {
   const { user } = useAuth();
   console.log(user);
   const [loading, setLoading] = useState(false);
+  const [userLoading, setUserLoading] = useState(false);
   const [filter, setFilter] = useState(0);
   const [selectedOptions, onOptionSelect] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -130,40 +132,55 @@ function Profile() {
           </Dropdown>
         </div>
       )}
-      {testState.mobile && loading && filter === 0 && <div>loading...</div>}
 
       {filter === 0 && (
         <div className="user-data-container">
           <div className="personal-info">
-            <div className="header">
-              <CircularImage
-                imageUrl="https://m.media-amazon.com/images/I/81M8l5kVdVL._SL1500_.jpg"
-                size="120px"
+            {userLoading ? (
+              <Loader
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border: "1px solid red",
+                  textAlign: "center",
+                }}
               />
-              <div>
-                <span></span>
-                {user.name}
-              </div>
-              <div>
-                <button>Edit</button>
-              </div>
-            </div>
-            <div className="body">
-              <div>
-                <span style={{ color: "grey", fontSize: ".9em" }}>
-                  Email -{" "}
-                </span>
-                {user.email}
-              </div>
-              <div>
-                <span style={{ color: "grey", fontSize: ".9em" }}>
-                  Mobile No -{" "}
-                </span>
-                {user.mobile}
-              </div>
-            </div>
-            <div className="footer"></div>
+            ) : (
+              <>
+                <div className="header">
+                  <CircularImage
+                    imageUrl="https://m.media-amazon.com/images/I/81M8l5kVdVL._SL1500_.jpg"
+                    size="120px"
+                  />
+                  <div>
+                    <span></span>
+                    {user.name}
+                  </div>
+                  <div>
+                    <button>Edit</button>
+                  </div>
+                </div>
+                <div className="body">
+                  <div>
+                    <span style={{ color: "grey", fontSize: ".9em" }}>
+                      Email -{" "}
+                    </span>
+                    {user.email}
+                  </div>
+                  <div>
+                    <span style={{ color: "grey", fontSize: ".9em" }}>
+                      Mobile No -{" "}
+                    </span>
+                    {user.mobile}
+                  </div>
+                </div>
+                <div className="footer"></div>
+              </>
+            )}
           </div>
+
           {!testState.mobile && (
             <div className="user-test">
               <Dropdown
@@ -246,7 +263,7 @@ function Profile() {
             <HomePageLoader />
           ) : (
             <div className="test-container">
-              {testState
+              {testState.visibleTests
                 .filter((item) => {
                   if (selectedOptions.length === 0) return true;
                   if (selectedOptions.includes(item.subject.toLowerCase()))
@@ -263,7 +280,7 @@ function Profile() {
                     return true;
                   return false;
                 })
-                .visibleTests.map((test, index) => (
+                .map((test, index) => (
                   <TestCard
                     key={index}
                     disabled={test.questions.length === 0}
