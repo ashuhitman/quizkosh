@@ -59,6 +59,7 @@ function CreateTest({ mode = "add" }) {
     if (test) {
       setTestId(test._id);
       if (test.questions[0]) {
+        console.log(test.questions[0]);
         setTestData(test.questions);
         setInputField(test.questions[0]);
       }
@@ -133,6 +134,7 @@ function CreateTest({ mode = "add" }) {
     if (updatedData) data = updatedData;
     // add data to textData
     testData[currentQuestion - 1] = data;
+    console.log("testdata: ", testData);
     setTestData(testData);
     // save it to localStorage
     const test = JSON.parse(localStorage.getItem("test"));
@@ -309,7 +311,6 @@ function CreateTest({ mode = "add" }) {
 
     try {
       if (mode === "edit") {
-        console.log(testData);
         const url =
           currentQuestion > testData.length
             ? API_ENDPOINTS.QUESTIONS_APPEND + testId
@@ -330,7 +331,7 @@ function CreateTest({ mode = "add" }) {
           success: true,
         });
       }
-      console.log(data);
+      console.log("updated", data);
       return data;
     } catch (error) {
       console.log("error", error);
@@ -358,10 +359,10 @@ function CreateTest({ mode = "add" }) {
     try {
       const questionId = testData[currentQuestion - 1]._id;
       const url = `${API_ENDPOINTS.QUESTIONS_DELETE + testId}/${questionId}`;
+      console.log(url);
       axios.defaults.withCredentials = true;
       const result = await axios.delete(url);
       if (result) {
-        console.log();
         const test = result.data.test;
         // update test in local storage
         localStorage.setItem("test", JSON.stringify(test));
@@ -380,7 +381,11 @@ function CreateTest({ mode = "add" }) {
         });
         // update testData
         setTestData(test.questions);
-        setInputField(emptyField);
+        if (currentQuestion > testData.length) {
+          setInputField(emptyField);
+        } else {
+          setInputField(test.questions[currentQuestion - 1]);
+        }
       }
       console.log(result, url, questionId);
     } catch (error) {
