@@ -73,7 +73,7 @@ router.get("/latest", async (req, res) => {
 router.post("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Get the requested page, default to 1
   const pageSize = parseInt(req.query.pageSize) || 8; // Set a default page size
-  console.log("mytest", page, pageSize);
+
   try {
     const id = req.body.id;
     const userTestsCount = await Test.countDocuments({
@@ -135,14 +135,12 @@ router.post("/create", authentication, async (req, res) => {
 });
 
 // delete test
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authentication, async (req, res) => {
   try {
-    console.log("running", req.params["id"]);
     const result = await Test.findByIdAndDelete(req.params["id"]);
     console.log("result: ", result);
-    if (result === null) return res.status(404).send({ error: "Id not found" });
-
-    return res.status(200).send({ success: "deleted succesfully" });
+    if (result) return res.status(200).send({ success: "deleted succesfully" });
+    return res.status(404).send({ error: "Id not found" });
   } catch (error) {
     console.log("error", error.message);
     res.status(404).send({ error: error.message });

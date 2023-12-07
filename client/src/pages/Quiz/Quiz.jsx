@@ -399,7 +399,7 @@ function Quiz() {
                 color: "white",
               }}
             >
-              +1
+              +{testState.test.pmarks ? testState.test.pmarks : 2}
             </span>{" "}
             <span
               style={{
@@ -409,7 +409,7 @@ function Quiz() {
                 color: "white",
               }}
             >
-              -1
+              -{testState.test.nmarks ? testState.test.nmarks : 0}
             </span>
           </div>
           <div style={{ marginLeft: "auto" }}>

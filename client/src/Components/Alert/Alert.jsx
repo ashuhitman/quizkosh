@@ -34,6 +34,7 @@ function Alert({
                 setShowLoader(true);
                 if (await handleLeft()) {
                   console.log("hide old");
+                  setShowLoader(false);
                   showHandler(false);
                 }
               }}
@@ -41,7 +42,14 @@ function Alert({
               {leftText}
             </button>
           )}
-          <button onClick={() => showHandler(false)}>{rightText}</button>
+          <button
+            onClick={() => {
+              setShowLoader(false);
+              showHandler(false);
+            }}
+          >
+            {rightText}
+          </button>
         </div>
       </div>
     </div>

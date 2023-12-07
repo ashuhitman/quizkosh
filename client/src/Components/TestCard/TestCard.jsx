@@ -39,12 +39,18 @@ function TestCard({ cardData, disabled, currentPage, user }) {
     try {
       // url
       const url = `${API_ENDPOINTS.TESTS_DELETE}${cardData._id}`;
+      const token = localStorage.getItem("token");
 
       // delete the test from database
       axios.defaults.withCredentials = true;
-      await axios.delete(url);
+      await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       // delete test from test state
       const updatedTests = testState.myTest;
+      console.log(updatedTests);
       updatedTests[currentPage - 1] = updatedTests[currentPage - 1].filter(
         (test) => test._id !== cardData._id
       );
@@ -55,8 +61,10 @@ function TestCard({ cardData, disabled, currentPage, user }) {
           visibleTest: updatedTests[currentPage - 1],
         },
       });
+      return true;
     } catch (error) {
       console.log("error: ", error);
+      return false;
     }
   };
   return (

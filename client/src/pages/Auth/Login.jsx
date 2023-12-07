@@ -44,18 +44,19 @@ function Login({ handleShowAlert, loading, setLoading }) {
       const result = await axios.post(AUTH_API_ENDPOINTS.LOGIN, data, {
         withCredentials: true,
       });
-      console.log(result);
+      console.log("login: ", result);
 
       if (result) {
         // go to home page
         // navigate("/");
         const message = result.data.success;
-        handleShowAlert(true, message, "#def0d8", "#49754b");
+        handleShowAlert({ message, show: true, success: true });
         login(result);
       }
     } catch (error) {
       console.log("error", error);
-      handleShowAlert(true, error.response.data.error);
+      const message = error.response.data.message;
+      handleShowAlert({ message, show: true, success: false });
       setLoading(false);
     }
   };

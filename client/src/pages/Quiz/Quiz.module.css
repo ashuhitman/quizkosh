@@ -237,6 +237,7 @@
 }
 
 .sub-header {
+  font-size: 0.9em;
   padding: 7px 20px;
   display: flex;
   color: black;

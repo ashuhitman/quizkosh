@@ -4,7 +4,7 @@ import Header from "../../Components/Header/Header";
 import { useAuth } from "../../context/Auth/AuthState";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Components/Dropdown/Dropdown";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaStar } from "react-icons/fa";
 import { API_ENDPOINTS, subjects } from "../../utils/constants";
 import axios from "axios";
 import TestContext from "../../context/Test/TestContext";
@@ -19,7 +19,10 @@ import { FcNext, FcPrevious } from "react-icons/fc";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import Modal from "../../Components/Modal/Modal";
 import Loader from "../../Components/Loader/Loader";
-
+import { MdEmail } from "react-icons/md";
+import { MdContactPhone } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
+import { toSentenceCase } from "../../utils/utils";
 function Profile() {
   const { user } = useAuth();
   console.log(user);
@@ -104,38 +107,40 @@ function Profile() {
           />
         )}
       </Header>
-      {testState.mobile && (
-        <div className="filter-header">
-          <button
-            className={filter === 0 ? "filter-item" : ""}
-            onClick={() => setFilter(0)}
-          >
-            Profile
-          </button>
-          <button
-            className={filter === 1 ? "filter-item" : ""}
-            onClick={() => {
-              setFilter(1);
-              console.log("clicked");
-            }}
-          >
-            My Test
-          </button>
-          <Dropdown
-            style={{ marginLeft: "auto" }}
-            options={subjects}
-            onSearchTerm={setSearchTerm}
-            selectedOptions={selectedOptions}
-            onOptionSelect={onOptionSelect}
-          >
-            <FaFilter color="#2c3e50" />
-          </Dropdown>
-        </div>
-      )}
+
+      <div className="filter-header">
+        <button
+          className={filter === 0 ? "filter-item" : ""}
+          onClick={() => setFilter(0)}
+        >
+          Profile
+        </button>
+        <button
+          className={filter === 1 ? "filter-item" : ""}
+          onClick={() => {
+            setFilter(1);
+            console.log("clicked");
+          }}
+        >
+          My Test
+        </button>
+        <Dropdown
+          style={{ marginLeft: "auto" }}
+          options={subjects}
+          onSearchTerm={setSearchTerm}
+          selectedOptions={selectedOptions}
+          onOptionSelect={onOptionSelect}
+        >
+          <FaFilter color="#2c3e50" />
+        </Dropdown>
+      </div>
 
       {filter === 0 && (
         <div className="user-data-container">
           <div className="personal-info">
+            <div className="personal-info-edit">
+              <MdEdit size="20" />
+            </div>
             {userLoading ? (
               <Loader
                 style={{
@@ -154,26 +159,16 @@ function Profile() {
                     imageUrl="https://m.media-amazon.com/images/I/81M8l5kVdVL._SL1500_.jpg"
                     size="120px"
                   />
-                  <div>
-                    <span></span>
-                    {user.name}
-                  </div>
-                  <div>
-                    <button>Edit</button>
-                  </div>
+                  <div>{toSentenceCase(user.name)}</div>
                 </div>
                 <div className="body">
-                  <div>
-                    <span style={{ color: "grey", fontSize: ".9em" }}>
-                      Email -{" "}
-                    </span>
-                    {user.email}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <MdEmail style={{ marginRight: "8px" }} />{" "}
+                    <p>{user.email}</p>
                   </div>
-                  <div>
-                    <span style={{ color: "grey", fontSize: ".9em" }}>
-                      Mobile No -{" "}
-                    </span>
-                    {user.mobile}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <MdContactPhone style={{ marginRight: "8px" }} />{" "}
+                    <p>{user.mobile}</p>
                   </div>
                 </div>
                 <div className="footer"></div>
@@ -181,7 +176,7 @@ function Profile() {
             )}
           </div>
 
-          {!testState.mobile && (
+          {
             <div className="user-test">
               <Dropdown
                 style={{ position: "absolute", top: "6px", right: "8px" }}
@@ -248,16 +243,17 @@ function Profile() {
                           disabled={test.questions.length === 0}
                           cardData={test}
                           user={user}
+                          currentPage={currentPage}
                         />
                       ))}
                   </div>
                 )}
               </div>
             </div>
-          )}
+          }
         </div>
       )}
-      {testState.mobile && filter === 1 && (
+      {filter === 1 && (
         <div className="outer-test-container">
           {loading ? (
             <HomePageLoader />
@@ -286,6 +282,7 @@ function Profile() {
                     disabled={test.questions.length === 0}
                     cardData={test}
                     user={user}
+                    currentPage={currentPage}
                   />
                 ))}
             </div>

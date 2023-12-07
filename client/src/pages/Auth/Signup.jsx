@@ -49,12 +49,12 @@ function Signup({ changeAuthState, handleShowAlert, loading, setLoading }) {
       if (result) {
         const message = result.data.success;
         changeAuthState(0);
-        handleShowAlert(true, message, "#def0d8", "#49754b");
+        handleShowAlert({ show: true, success: true, message });
       }
     } catch (error) {
       console.log("error", error);
-      const message = error.response.data.error;
-      handleShowAlert(true, message);
+      const message = error.response.data.message;
+      handleShowAlert({ show: true, success: false, message });
     }
     setLoading(false);
   };

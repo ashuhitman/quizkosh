@@ -30,7 +30,7 @@ function App() {
     {
       path: "/tests/edit",
       element: <CreateTest mode="edit" />,
-      requiresAuth: false,
+      requiresAuth: true,
     },
     {
       path: "/tests/:docId",

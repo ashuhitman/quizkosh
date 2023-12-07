@@ -14,7 +14,7 @@ body {
 .filter-header {
   padding-left: 20px;
   padding-right: 20px;
-  display: flex;
+  display: none;
   align-items: center;
   color: white;
   gap: 20px;
@@ -43,23 +43,33 @@ body {
   overflow: hidden;
 }
 .personal-info {
-  /* margin: auto; */
   position: relative;
 
-  width: min(300px, 90%);
+  width: min(250px, 90%);
   padding: 15px 10px;
   box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
     rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
   border-radius: 8px;
   background-color: #fff;
 }
-
+.personal-info-edit {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: grey;
+  cursor: pointer;
+}
+.personal-info-edit:hover {
+  color: black;
+}
 .personal-info .header {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  /* border-bottom: 1px solid grey; */
+  padding: 10px;
+  margin-bottom: 10px;
 }
 .personal-info .header button {
   padding: 6px 15px;
@@ -68,27 +78,24 @@ body {
   cursor: pointer;
   border: 1px solid transparent;
 }
-.personal-info .header button:hover {
-  border: 1px solid black;
-}
-.personal-info .body {
-  max-height: 260px;
 
+.personal-info .body {
   overflow-y: auto;
 }
 .personal-info .body > div {
-  border: 1px solid grey;
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
-  margin: 10px;
-  border-radius: 4px;
 }
 .personal-info .footer {
   flex: 1;
 }
 
 .personal-info .photo {
-  height: 100px;
-  width: 100px;
+  height: 80px;
+  width: 80px;
   /* border-radius: 50%; */
 }
 .personal-info img {
@@ -124,7 +131,15 @@ body {
 .spacer {
   flex: 1; /* Fills remaining space */
 }
-
+p {
+  margin: 0px;
+}
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
+  .filter-header {
+    display: flex;
+  }
+  .user-test {
+    display: none;
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
 import Header from "../../Components/Header/Header";
-import { MdAddCircle } from "react-icons/md";
+import { MdAddCircle, MdDelete } from "react-icons/md";
 import { useAuth } from "../../context/Auth/AuthState";
 import { Link, useNavigate } from "react-router-dom";
 import TestContext from "../../context/Test/TestContext";
@@ -14,6 +14,7 @@ import { API_ENDPOINTS } from "../../utils/constants";
 import axios from "axios";
 import { MdEditDocument } from "react-icons/md";
 import AlertMessage from "../../Components/AlertMessage/AlertMessage";
+import CircularComponent from "../../Components/CircularComponent/CircularComponent";
 function CreateTest({ mode = "add" }) {
   const { login, logout, isValidToken, token, user } = useAuth();
 
@@ -32,11 +33,12 @@ function CreateTest({ mode = "add" }) {
   const [showAlert, setShowAlert] = useState(false);
   const [enableSubmitBtn, setEnableSubmitBtn] = useState(false);
   const [modal, setModal] = useState(false);
+  const [delQuestion, setDelQuestion] = useState(false);
   const [alertData, setAlertData] = useState({
     show: false,
     message: "",
-    color: "#965562",
-    backgroundColor: "#f2dedf",
+    success: true,
+    style: undefined,
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -125,7 +127,10 @@ function CreateTest({ mode = "add" }) {
 
       return;
     }
-
+    // update question in database
+    const updatedData = await updateQuestion(data);
+    console.log("updated data: ", updatedData);
+    if (updatedData) data = updatedData;
     // add data to textData
     testData[currentQuestion - 1] = data;
     setTestData(testData);
@@ -202,6 +207,28 @@ function CreateTest({ mode = "add" }) {
   };
 
   const addQuestions = async () => {
+    if (mode === "edit") {
+      const test = JSON.parse(localStorage.getItem("test") || null);
+      if (test) {
+        const testData = testState.myTest;
+        for (let i = 0; i < testData.length; i++) {
+          for (let j = 0; j < testData[i].length; j++) {
+            if (testData[i][j]._id === test._id) {
+              testData[i][j] = test;
+              break;
+            }
+          }
+        }
+        dispatch({
+          type: actions.save_mytest,
+          payload: {
+            tests: testData,
+            visibleTest: testState.visibleTests,
+          },
+        });
+      }
+      return true;
+    }
     const apiUrl = `${API_ENDPOINTS.QUESTIONS_ADD + testId}`;
     console.log(apiUrl);
     try {
@@ -250,25 +277,36 @@ function CreateTest({ mode = "add" }) {
       setShowAlert(false);
     }
   };
-  const handleShowAlert = (
-    show,
-    message,
-    color = "#965562",
-    backgroundColor = "#f2dedf"
-  ) => {
-    setAlertData({ ...alertData, show, backgroundColor, color, message });
+  const handleShowAlert = (alert) => {
+    setAlertData({ ...alertData, ...alert });
   };
-  const updateQuestion = async () => {
+  const updateQuestion = async (data) => {
     // update the question in database
-    let data = {
-      question: question,
-      options: [
-        { text: option1.text, isAnswer: option1.isAnswer },
-        { text: option2.text, isAnswer: option2.isAnswer },
-        { text: option3.text, isAnswer: option3.isAnswer },
-        { text: option4.text, isAnswer: option4.isAnswer },
-      ],
-    };
+    // let data = {
+    //   question: question,
+    //   options: [
+    //     { text: option1.text, isAnswer: option1.isAnswer },
+    //     { text: option2.text, isAnswer: option2.isAnswer },
+    //     { text: option3.text, isAnswer: option3.isAnswer },
+    //     { text: option4.text, isAnswer: option4.isAnswer },
+    //   ],
+    // };
+    // check if data has been changed
+
+    if (currentQuestion <= testData.length) {
+      const { _id: id, question, options } = testData[currentQuestion - 1];
+      console.log(options, testData[currentQuestion - 1]);
+      const { _id: id1, ...rest1 } = options[0];
+      const { _id: id2, ...rest2 } = options[1];
+      const { _id: id3, ...rest3 } = options[2];
+      const { _id: id4, ...rest4 } = options[3];
+      const oldData = { question, options: [rest1, rest2, rest3, rest4] };
+      if (JSON.stringify(data) === JSON.stringify(oldData)) {
+        console.log("no change");
+        return;
+      }
+    }
+
     try {
       if (mode === "edit") {
         console.log(testData);
@@ -286,12 +324,69 @@ function CreateTest({ mode = "add" }) {
         axios.defaults.withCredentials = true;
         const result = await axios.put(url, data);
         data = result.data.data;
-        handleShowAlert(true, "Question updates", "#def0d8", "#49754b");
+        handleShowAlert({
+          show: true,
+          message: `Question no ${currentQuestion} updated`,
+          success: true,
+        });
       }
+      console.log(data);
+      return data;
     } catch (error) {
       console.log("error", error);
-      handleShowAlert(true, error.response.data.error);
+      handleShowAlert({
+        show: true,
+        message: error.response.data.error,
+        success: false,
+      });
+      return null;
     }
+  };
+
+  const deleteQuestion = async () => {
+    console.log("deleting question");
+    const emptyField = {
+      question: "",
+      options: [
+        { text: "", isAnswer: false },
+        { text: "", isAnswer: false },
+        { text: "", isAnswer: false },
+        { text: "", isAnswer: false },
+      ],
+    };
+
+    try {
+      const questionId = testData[currentQuestion - 1]._id;
+      const url = `${API_ENDPOINTS.QUESTIONS_DELETE + testId}/${questionId}`;
+      axios.defaults.withCredentials = true;
+      const result = await axios.delete(url);
+      if (result) {
+        console.log();
+        const test = result.data.test;
+        // update test in local storage
+        localStorage.setItem("test", JSON.stringify(test));
+        // update test in testState
+        let mytest = testState.myTest;
+        mytest = mytest.map((item) => {
+          if (item._id === testId) {
+            return test;
+          }
+          return item;
+        });
+
+        dispatch({
+          type: actions.save_mytest,
+          payload: { tests: mytest, visibleTest: testState.visibleTests },
+        });
+        // update testData
+        setTestData(test.questions);
+        setInputField(emptyField);
+      }
+      console.log(result, url, questionId);
+    } catch (error) {
+      console.log("error", error);
+    }
+    return true;
   };
 
   return (
@@ -322,8 +417,28 @@ function CreateTest({ mode = "add" }) {
           rightText="No"
           showHandler={() => setShowAlert(false)}
         />
+        <Alert
+          show={delQuestion}
+          title="Delete Question"
+          body={`Are you sure you want to delete question ${currentQuestion} ?`}
+          handleLeft={deleteQuestion}
+          leftText="Yes"
+          rightText="No"
+          showHandler={() => setDelQuestion(false)}
+        />
 
         <form>
+          <CircularComponent
+            color="#2c3e50"
+            backgroundColor="#c0392b"
+            size="15"
+            marginLeft="auto"
+            hoverStyle={{ color: "#e74c3c", border: "2px solid #e74c3c" }}
+            onClick={() => setDelQuestion(true)}
+          >
+            <MdDelete />
+          </CircularComponent>
+
           <div className="form-group question-title">
             <div>
               <strong>{currentQuestion}.</strong>
@@ -473,26 +588,26 @@ function CreateTest({ mode = "add" }) {
               disabled={currentQuestion === 1 ? true : false}
               clickFun={onPrevious}
             />
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Button type="button" text="Next" clickFun={onNext} />
-              {mode == "add" && (
-                <Button
-                  type="button"
-                  text="Submit"
-                  disabled={!enableSubmitBtn}
-                  clickFun={onSubmit}
-                  style={{ padding: " 6px 10px" }}
-                >
-                  <input
-                    style={{ marginRight: "10px" }}
-                    type="checkbox"
-                    onChange={() => setEnableSubmitBtn((prev) => !prev)}
-                  />
-                </Button>
-              )}
-              {mode == "edit" && (
-                <Button type="button" text="Update" clickFun={updateQuestion} />
-              )}
+            <div style={{ display: "flex", alignItems: "stretch" }}>
+              <Button
+                type="button"
+                text={mode === "add" ? "Save & Next" : "Update & Next"}
+                clickFun={onNext}
+              />
+
+              <Button
+                type="button"
+                text="Submit"
+                disabled={!enableSubmitBtn}
+                clickFun={onSubmit}
+                // style={{ padding: " 6px 10px" }}
+              >
+                <input
+                  style={{ marginRight: "10px" }}
+                  type="checkbox"
+                  onChange={() => setEnableSubmitBtn((prev) => !prev)}
+                />
+              </Button>
             </div>
           </div>
         </form>

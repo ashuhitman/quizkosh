@@ -13,13 +13,14 @@ router.get("/", (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
+  console.log("sigining up user");
   try {
     // check if email id already exists
     const exisitingUser = await User.findOne({ email: req.body.email });
     if (exisitingUser) {
       return res
         .status(409)
-        .send({ error: "Signup failed! User already exists" });
+        .send({ message: "Signup failed! User already exists" });
     }
     // hash psssword
     req.body.password = await bycrypt.hash(req.body.password, 10);
@@ -32,23 +33,28 @@ router.post("/signup", async (req, res) => {
       res.status(201).send({ success: "User created successfully" });
     } else {
       // if failed to save
-      res.status(409).send({ error: "Couldn't create user" });
+      res.status(409).send({ message: "Couldn't create user" });
     }
   } catch (error) {
-    res.status(409).send({ error: error.message });
+    res.status(409).send({ message: error.message });
   }
 });
+
 router.post("/login", async (req, res) => {
   try {
+    console.log("logging in", req.body);
     // distructure email and password
     const { email, password } = req.body;
     // encode password
     // check if user exists
     const user = await User.findOne({ email });
+
     // if user exists
     if (user) {
+      console.log("found user");
       // password macthes
-      if (bycrypt.compare(req.body.password, user.password)) {
+      if (await bycrypt.compare(req.body.password, user.password)) {
+        console.log("password matched");
         // copy user
         const payload = { ...user.toJSON() };
         payload.password = undefined;
@@ -69,15 +75,22 @@ router.post("/login", async (req, res) => {
           maxAge: 365 * 30 * 24 * 60 * 60 * 1000,
         });
 
-        return res.status(200).send({ token, refreshToken, user: payload });
+        return res
+          .status(200)
+          .send({
+            token,
+            refreshToken,
+            user: payload,
+            message: "logged in successfully",
+          });
       }
-      return res.status(403).send({ error: "Incorrect password" });
+      return res.status(403).send({ message: "Incorrect password" });
     } else {
       // if user not exists
-      return res.status(404).send({ error: "User does not exist" });
+      return res.status(404).send({ message: "User does not exist" });
     }
   } catch (error) {
-    res.status(409).send({ error: error.message });
+    res.status(409).send({ message: "Login failed" });
   }
 });
 

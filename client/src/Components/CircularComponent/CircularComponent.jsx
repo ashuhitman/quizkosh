@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const CircularComponent = ({
   number,
@@ -6,9 +6,22 @@ const CircularComponent = ({
   color,
   bgcolor,
   children,
+  marginLeft,
+  hoverStyle,
   onClick = () => {},
 }) => {
-  // Style object to define the circle's appearance
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+  const getHoverStyle = () => {
+    return isHovered ? hoverStyle : "";
+  };
   const circleStyle = {
     width: `${size}px`,
     height: `${size}px`,
@@ -17,12 +30,21 @@ const CircularComponent = ({
     backgroundColor: bgcolor,
     color,
     border: `2px solid ${color}`,
-    textAlign: "center",
     cursor: "pointer",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft,
+    ...getHoverStyle(),
   };
 
   return (
-    <div style={circleStyle} onClick={onClick}>
+    <div
+      style={circleStyle}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+    >
       {number}
       {children}
     </div>

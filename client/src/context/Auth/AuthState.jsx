@@ -8,10 +8,13 @@ export const AuthContext = createContext();
 export function AuthState(props) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const initTokenValidation = async (token) => {
+    setLoading(true);
+    await validateToken(token);
+    setLoading(false);
+  };
 
   const validateToken = async (token) => {
-    console.log("validating...");
-    setLoading(true);
     try {
       // validate token on the server side
       const response = await axios.post(AUTH_API_ENDPOINTS.VALID_TOKEN, {
@@ -21,20 +24,19 @@ export function AuthState(props) {
       if (response.data.isValid) {
         console.log("validated...");
         setUser(response.data.user);
-        setLoading(false);
       } else {
         console.log("refreshing....");
-        await refreshToekn();
+        await refreshToken();
       }
     } catch (error) {
       console.log("error", error);
-      setLoading(false);
     }
   };
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      validateToken(token);
+      console.log("token", token);
+      initTokenValidation(token);
     } else {
       setLoading(false);
     }
@@ -56,7 +58,7 @@ export function AuthState(props) {
       return false;
     }
   };
-  const refreshToekn = async () => {
+  const refreshToken = async () => {
     try {
       // api call to refresh token
       axios.defaults.withCredentials = true;
@@ -65,15 +67,12 @@ export function AuthState(props) {
       if (response.data.isValid) {
         localStorage.setItem("token", response.data.token);
         setUser(response.data.user);
-        setLoading(false);
       } else {
         setUser(null);
         localStorage.removeItem("token");
-        setLoading(false);
       }
     } catch (error) {
       console.log("error", error);
-      setLoading(false);
     }
     console.log("refreshed");
   };

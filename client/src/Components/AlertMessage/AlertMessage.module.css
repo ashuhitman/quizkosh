@@ -1,32 +1,49 @@
-.alert {
-  z-index: 100;
+.alert-container {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  animation: slideIn 0.3s linear forwards;
-  /* display: none; */
+  /* top: 20px; */
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  animation: slidein 0.2s ease-in forwards;
+}
+.alert {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 3px;
+  color: white;
 }
 
-.alert > div {
-  padding: 8px 20px 10px 20px;
-  background-color: black;
-  width: min(350px, 90%);
-  margin: auto;
-  height: fit-content;
-  border-radius: 2px;
-  text-align: center;
-}
-/* The animation code */
-@keyframes slideIn {
+@keyframes slidein {
   0% {
-    top: -30px;
+    top: -20px;
   }
-  100% {
-    top: 20px;
-  }
-
   100% {
     top: 20px;
   }
 }
+.failure {
+  background-color: rgb(182, 36, 36);
+}
+.success {
+  background-color: rgb(14, 164, 14);
+}
+.alert > div {
+  padding: 10px 15px;
+}
+.cancel-alert {
+  cursor: pointer;
+}
+
+.cancel-alert:hover {
+  color: red;
+}
+/* Extra small devices (phones, 600px and down) */
+/* @media only screen and (max-width: 600px) {
+  .alert-container {
+    top: auto;
+    bottom: 20px;
+  }
+} */

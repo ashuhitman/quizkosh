@@ -28,11 +28,7 @@ const intialState = {
   )
     ? 6
     : 12,
-  mobile: /iphone|ipod|android|ie|blackberry|fennec/.test(
-    navigator.userAgent.toLowerCase()
-  )
-    ? true
-    : false,
+  mobile: window.innerWidth < 768 ? true : false,
 };
 const testReducer = (state, action) => {
   console.log(action);

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ObjectId } from "mongoose";
 
 import Test from "../Models/Test.js";
 
@@ -45,6 +46,7 @@ router.post("/add/:id", async (req, res) => {
 // update question
 
 router.put("/update/:id", async (req, res) => {
+  console.log("updating...");
   try {
     console.log(req.body);
     const testId = req.params["id"];
@@ -79,18 +81,20 @@ router.put("/update/:id", async (req, res) => {
 
 // append question
 router.put("/append/:id", async (req, res) => {
+  console.log("appending...");
   try {
     const testId = req.params["id"];
     const newQuestion = req.body;
-    console.log(testId, newQuestion);
+
     const result = await Test.findOneAndUpdate(
       { _id: testId },
-      { $push: { questions: newQuestion } },
-      { new: true }
+      { $push: { questions: newQuestion } }
     );
+    console.log(result);
     if (result) {
       const lastIndex = result.questions.length - 1;
       const updatedQuestion = result.questions[lastIndex];
+      console.log(updatedQuestion);
       return res.status(201).send({
         success: "question updated successfully",
         data: updatedQuestion,
@@ -98,7 +102,38 @@ router.put("/append/:id", async (req, res) => {
     }
     res.status(404).send({ error: "test id not found" });
   } catch (error) {
-    res.status(404).send({ error: error });
+    res.status(404).send({ error: error + "error" });
+  }
+});
+
+// DELETE request to delete a question from a test by ID
+router.delete("/delete/:testId/:questionId", async (req, res) => {
+  const { testId, questionId } = req.params;
+
+  try {
+    const test = await Test.findOne({ _id: testId });
+
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
+    const indexToRemove = test.questions.findIndex((question) => {
+      console.log(question._id, questionId);
+      if (question._id.toString() === questionId) return true;
+    });
+    if (indexToRemove !== -1) {
+      test.questions.splice(indexToRemove, 1); // Remove the questionId
+      await test.save(); // Save the updated Test document
+      console.log("Question deleted from Test");
+      res.status(200).json({ message: "Question deleted from Test", test });
+    } else {
+      return res.status(404).json({ message: "Question not found in Test" });
+    }
+  } catch (error) {
+    console.error("Error deleting question from Test:", error);
+    res
+      .status(500)
+      .json({ message: "Error deleting question from Test", error });
   }
 });
 // append a question

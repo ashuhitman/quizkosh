@@ -8,7 +8,7 @@ import { useAuth } from "../../context/Auth/AuthState";
 import Alert from "../Alert/Alert";
 function Header({ children }) {
   const [showAlert, setShowAlert] = useState(false);
-  const { login, logout, token, user } = useAuth();
+  const { login, logout, loading, user } = useAuth();
 
   return (
     <>
@@ -25,22 +25,24 @@ function Header({ children }) {
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           <div className={styles.logo}>QuizKosh</div>
         </Link>
-        <div className={styles.links}>
-          <div style={{ marginRight: "10px" }}>{children}</div>
-          {!user ? (
-            <div>
-              <Link to="/auth" className={styles.link}>
-                Login
-              </Link>
-            </div>
-          ) : (
-            <div>
-              <DropdownList setShowAlert={setShowAlert}>
-                <AiFillSetting />
-              </DropdownList>
-            </div>
-          )}
-        </div>
+        {!loading && (
+          <div className={styles.links}>
+            <div style={{ marginRight: "10px" }}>{children}</div>
+            {!user ? (
+              <div>
+                <Link to="/auth" className={styles.link}>
+                  Login
+                </Link>
+              </div>
+            ) : (
+              <div>
+                <DropdownList setShowAlert={setShowAlert}>
+                  <AiFillSetting />
+                </DropdownList>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

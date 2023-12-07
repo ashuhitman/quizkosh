@@ -11,18 +11,13 @@ function Auth() {
   const [loading, setLoading] = useState(false);
   const [alertData, setAlertData] = useState({
     show: false,
+    success: true,
     message: "",
-    color: "#965562",
-    backgroundColor: "#f2dedf",
+    style: undefined,
   });
 
-  const handleShowAlert = (
-    show,
-    message,
-    color = "#965562",
-    backgroundColor = "#f2dedf"
-  ) => {
-    setAlertData({ ...alertData, show, backgroundColor, color, message });
+  const handleShowAlert = (alert) => {
+    setAlertData({ ...alertData, ...alert });
   };
   const changeAuthState = (x) => {
     if (loading) return;
@@ -30,9 +25,8 @@ function Auth() {
   };
   return (
     <>
-      {alertData.show && (
-        <AlertMessage data={alertData} handleShowAlert={handleShowAlert} />
-      )}
+      <AlertMessage data={alertData} handleShowAlert={handleShowAlert} />
+
       <div className={styles.authContainer}>
         <div className={styles.box}>
           <div style={{ textAlign: "center" }}>
