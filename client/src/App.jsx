@@ -23,12 +23,12 @@ function App() {
       requiresAuth: true,
     },
     {
-      path: "/tests/create",
-      element: <CreateTest />,
+      path: "/tests/create/:testId",
+      element: <CreateTest mode="add" />,
       requiresAuth: true,
     },
     {
-      path: "/tests/edit",
+      path: "/tests/edit/:testId",
       element: <CreateTest mode="edit" />,
       requiresAuth: true,
     },

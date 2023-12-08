@@ -90,8 +90,11 @@ function TestCard({ cardData, disabled, currentPage, user }) {
             <div
               className={styles.circle}
               onClick={() => {
-                localStorage.setItem("test", JSON.stringify(cardData));
-                navigate("/tests/edit");
+                dispatch({
+                  type: actions.update_test,
+                  payload: { test: cardData },
+                });
+                navigate("/tests/edit/" + cardData._id);
               }}
             >
               <MdEditDocument />

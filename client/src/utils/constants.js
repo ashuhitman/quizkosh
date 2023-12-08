@@ -22,6 +22,10 @@ export const AUTH_API_ENDPOINTS = {
   VALID_TOKEN: API_BASE_URL + "/auth/validate-token",
   TOKEN: API_BASE_URL + "/auth/token",
 };
+export const USER_ENDPOINTS = {
+  UPDATE: API_BASE_URL + "/auth/",
+  FETCH_USER_INFO: API_BASE_URL + "/auth/fetch/",
+};
 
 export const MIN_QUESTION = 2;
 export const TEXT_LENGTH = 5;

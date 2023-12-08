@@ -2,7 +2,7 @@ import React, { useRef, useState, useContext, useEffect } from "react";
 import Header from "../../Components/Header/Header";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { useAuth } from "../../context/Auth/AuthState";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import TestContext from "../../context/Test/TestContext";
 import Alert from "../../Components/Alert/Alert";
 import Button from "../../Components/Button/Button";
@@ -15,6 +15,7 @@ import axios from "axios";
 import { MdEditDocument } from "react-icons/md";
 import AlertMessage from "../../Components/AlertMessage/AlertMessage";
 import CircularComponent from "../../Components/CircularComponent/CircularComponent";
+import Loader from "../../Components/Loader/Loader";
 function CreateTest({ mode = "add" }) {
   const { login, logout, isValidToken, token, user } = useAuth();
 
@@ -22,10 +23,11 @@ function CreateTest({ mode = "add" }) {
 
   // test context
   const { testState, dispatch } = useContext(TestContext);
+  const { testId } = useParams();
 
   // const [isLoading, testDat] = useNetwork(location);
 
-  const [testId, setTestId] = useState(null);
+  const [loading, setloading] = useState(false);
 
   const lastVisistedQuestions = useRef(1);
   const [currentQuestion, setCurrentQuestion] = useState(1);
@@ -54,19 +56,38 @@ function CreateTest({ mode = "add" }) {
   const [option3, setOption3] = useState({ text: "", isAnswer: false });
   const [option4, setOption4] = useState({ text: "", isAnswer: false });
   useEffect(() => {
-    // get id from local storage
-    const test = JSON.parse(localStorage.getItem("test") || null);
-    if (test) {
-      setTestId(test._id);
-      if (test.questions[0]) {
-        console.log(test.questions[0]);
-        setTestData(test.questions);
-        setInputField(test.questions[0]);
-      }
-
-      dispatch({ type: actions.update_test, payload: { test: test } });
-    }
+    fetchTestData(testId);
   }, []);
+
+  const fetchTestData = async (testId) => {
+    let test = testState.test;
+    console.log(test, testId);
+    if (!test) {
+      setloading(true);
+      try {
+        const result = await axios.get(API_ENDPOINTS.TESTS + "/" + testId);
+        test = result.data.test;
+        console.log(test);
+        if (test) {
+          dispatch({
+            type: actions.update_test,
+            payload: { test: test },
+          });
+        }
+        setloading(false);
+      } catch (error) {
+        console.log("error: ", error);
+        setloading(false);
+      }
+    }
+    console.log(test, test.questions);
+    if (test.questions[0]) {
+      console.log(test.questions[0]);
+      setTestData(test.questions);
+      setInputField(test.questions[0]);
+    }
+    localStorage.setItem("test", JSON.stringify(test));
+  };
 
   useEffect(() => {
     if (lastVisistedQuestions.current > currentQuestion) {
@@ -303,6 +324,7 @@ function CreateTest({ mode = "add" }) {
 
     try {
       if (mode === "edit") {
+        setloading(true);
         const url =
           currentQuestion > testData.length
             ? API_ENDPOINTS.QUESTIONS_APPEND + testId
@@ -323,6 +345,7 @@ function CreateTest({ mode = "add" }) {
           success: true,
         });
       }
+      setloading(false);
 
       return data;
     } catch (error) {
@@ -332,6 +355,7 @@ function CreateTest({ mode = "add" }) {
         message: error.response.data.error,
         success: false,
       });
+      setloading(false);
       return null;
     }
   };
@@ -398,12 +422,14 @@ function CreateTest({ mode = "add" }) {
 
   return (
     <div className="create-test-container">
-      <Modal
-        leftFun={() => setModal(false)}
-        modal={modal}
-        mode={mode}
-        handleShowAlert={handleShowAlert}
-      />
+      {modal && (
+        <Modal
+          leftFun={() => setModal(false)}
+          modal={modal}
+          mode={mode}
+          handleShowAlert={handleShowAlert}
+        />
+      )}
       <Header home={!isValidToken} showAlert={setShowAlert}>
         <div
           className="edit-circle"
@@ -449,11 +475,14 @@ function CreateTest({ mode = "add" }) {
               <MdDelete />
             </CircularComponent>
           )}
-
+          {mode === "edit" && loading && (
+            <Loader style={{ textAlign: "center" }} />
+          )}
           <div className="form-group question-title">
             <div>
               <strong>
-                {currentQuestion}/{mode === "edit" && testData.length}
+                {currentQuestion}
+                {mode === "edit" && "/" + testData.length}
               </strong>
 
               <textarea

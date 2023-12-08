@@ -108,10 +108,10 @@ router.get("/:id", async (req, res) => {
       throw new Error("Invalid Test ID");
     }
     const test = await Test.findOne({ _id: documentId });
-    if (test) {
-      res.status(200).send(test);
-    } else {
+    if (!test) {
       throw new Error("Test Id does not exist");
+    } else {
+      res.status(200).send({ test });
     }
   } catch (error) {
     res.status(400).send(error.message);
@@ -124,8 +124,9 @@ router.post("/create", authentication, async (req, res) => {
     req.body.user = req.user._id;
     const test = Test(req.body);
     const result = await test.save();
-    if (test) {
-      res.status(200).send({ success: "added succesfully", data: result });
+    console.log(result);
+    if (result) {
+      res.status(200).send({ success: "added succesfully", test: result });
     } else {
       res.status(404).send({ error: "test creation failed" });
     }

@@ -23,6 +23,8 @@ import { MdEmail } from "react-icons/md";
 import { MdContactPhone } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import { toSentenceCase } from "../../utils/utils";
+import PersonalInfo from "../../Components/PersonalInfo/PersonalInfo";
+import AlertMessage from "../../Components/AlertMessage/AlertMessage";
 function Profile() {
   const { user } = useAuth();
   console.log(user);
@@ -34,7 +36,13 @@ function Profile() {
   const { testState, dispatch } = useContext(TestContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [modal, setModal] = useState(false);
-  console.log("test: ", testState);
+  const [alertData, setAlertData] = useState({
+    show: false,
+    message: "",
+    success: true,
+    style: undefined,
+  });
+
   useEffect(() => {
     // get user data
     // getUserData();
@@ -94,9 +102,13 @@ function Profile() {
       setCurrentPage((prev) => prev + 1);
     }
   };
+  const handleShowAlert = (alert) => {
+    setAlertData({ ...alertData, ...alert });
+  };
 
   return (
     <div className="profile-container">
+      <AlertMessage data={alertData} handleShowAlert={handleShowAlert} />
       <Modal leftFun={() => setModal(false)} modal={modal} />
       <Header>
         {user && (
@@ -137,44 +149,7 @@ function Profile() {
 
       {filter === 0 && (
         <div className="user-data-container">
-          <div className="personal-info">
-            <div className="personal-info-edit">
-              <MdEdit size="20" />
-            </div>
-            {userLoading ? (
-              <Loader
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  border: "1px solid red",
-                  textAlign: "center",
-                }}
-              />
-            ) : (
-              <>
-                <div className="header">
-                  <CircularImage
-                    imageUrl="https://m.media-amazon.com/images/I/81M8l5kVdVL._SL1500_.jpg"
-                    size="120px"
-                  />
-                  <div>{toSentenceCase(user.name)}</div>
-                </div>
-                <div className="body">
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <MdEmail style={{ marginRight: "8px" }} />{" "}
-                    <p>{user.email}</p>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <MdContactPhone style={{ marginRight: "8px" }} />{" "}
-                    <p>{user.mobile}</p>
-                  </div>
-                </div>
-                <div className="footer"></div>
-              </>
-            )}
-          </div>
+          <PersonalInfo user={user} handleShowAlert={handleShowAlert} />
 
           {
             <div className="user-test">

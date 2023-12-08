@@ -42,68 +42,7 @@ body {
   gap: 20px;
   overflow: hidden;
 }
-.personal-info {
-  position: relative;
 
-  width: min(250px, 90%);
-  padding: 15px 10px;
-  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
-    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
-  border-radius: 8px;
-  background-color: #fff;
-}
-.personal-info-edit {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: grey;
-  cursor: pointer;
-}
-.personal-info-edit:hover {
-  color: black;
-}
-.personal-info .header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  /* border-bottom: 1px solid grey; */
-  padding: 10px;
-  margin-bottom: 10px;
-}
-.personal-info .header button {
-  padding: 6px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
-
-.personal-info .body {
-  overflow-y: auto;
-}
-.personal-info .body > div {
-  /* border: 1px solid red; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-}
-.personal-info .footer {
-  flex: 1;
-}
-
-.personal-info .photo {
-  height: 80px;
-  width: 80px;
-  /* border-radius: 50%; */
-}
-.personal-info img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
 .user-test {
   background-color: #fff;
   flex: 1;
@@ -141,8 +80,5 @@ p {
   }
   .user-test {
     display: none;
-  }
-  .personal-info {
-    width: 90%;
   }
 }

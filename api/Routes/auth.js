@@ -12,6 +12,47 @@ router.get("/", (req, res) => {
   res.status(200).send("route for user authentication");
 });
 
+// get user info by id
+router.post("/fetch/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await User.findById(id);
+    result.password = undefined;
+    result.refreshTokens = undefined;
+    if (!result) {
+      res.status(404).send({ message: "User not found" });
+    } else {
+      res.status(200).send({ user: result });
+    }
+  } catch (error) {
+    res.status(404).send({ message: "Couldn't fetch user data" });
+  }
+});
+// update user info
+router.put("/:id", async (req, res) => {
+  const userId = req.params.id;
+  const { mobile, name } = req.body;
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { mobile, name } },
+      { new: true } // To return the updated document
+    );
+    updatedUser.password = undefined;
+    updatedUser.refreshTokens = undefined;
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "User info updated successfully", user: updatedUser });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+});
 router.post("/signup", async (req, res) => {
   console.log("sigining up user");
   try {
@@ -75,14 +116,12 @@ router.post("/login", async (req, res) => {
           maxAge: 365 * 30 * 24 * 60 * 60 * 1000,
         });
 
-        return res
-          .status(200)
-          .send({
-            token,
-            refreshToken,
-            user: payload,
-            message: "logged in successfully",
-          });
+        return res.status(200).send({
+          token,
+          refreshToken,
+          user: payload,
+          message: "logged in successfully",
+        });
       }
       return res.status(403).send({ message: "Incorrect password" });
     } else {

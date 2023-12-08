@@ -70,17 +70,19 @@ function Modal({
               )
             : await axios.post(API_ENDPOINTS.TESTS_CREATE, formValues, headers);
         const test = response.data.test;
+        console.log(test);
 
         // save data locally
-        localStorage.setItem("test", JSON.stringify(test));
+        // localStorage.setItem("test", JSON.stringify(test));
         dispatch({ type: actions.update_test, payload: { test: test } });
         // navigate to create test page
-        if (mode !== "edit") navigate("/tests/create");
-        handleShowAlert({
-          show: true,
-          success: true,
-          message: response.data.message,
-        });
+        if (mode !== "edit") navigate("/tests/create/" + test._id);
+        if (handleShowAlert)
+          handleShowAlert({
+            show: true,
+            success: true,
+            message: response.data.message,
+          });
         leftFun();
       } catch (error) {
         console.error("Error", error);
@@ -108,7 +110,7 @@ function Modal({
         nmarks: data.nmarks,
       });
     }
-  }, [data]);
+  }, []);
   if (!modal) return <></>;
   return (
     <div className={styles.modal}>
