@@ -434,16 +434,18 @@ function CreateTest({ mode = "add" }) {
         />
 
         <form>
-          <CircularComponent
-            color="#2c3e50"
-            backgroundColor="#c0392b"
-            size="15"
-            marginLeft="auto"
-            hoverStyle={{ color: "#e74c3c", border: "2px solid #e74c3c" }}
-            onClick={() => setDelQuestion(true)}
-          >
-            <MdDelete />
-          </CircularComponent>
+          {currentQuestion <= testData.length && (
+            <CircularComponent
+              color="#2c3e50"
+              backgroundColor="#c0392b"
+              size="15"
+              marginLeft="auto"
+              hoverStyle={{ color: "#e74c3c", border: "2px solid #e74c3c" }}
+              onClick={() => setDelQuestion(true)}
+            >
+              <MdDelete />
+            </CircularComponent>
+          )}
 
           <div className="form-group question-title">
             <div>

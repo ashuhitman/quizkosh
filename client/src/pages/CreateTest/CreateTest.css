@@ -19,6 +19,7 @@
   justify-content: center;
   color: black;
   background-color: #55a47a;
+  margin-top: 20px;
 }
 .form-container form {
   max-width: 90%;
