@@ -142,4 +142,7 @@ p {
   .user-test {
     display: none;
   }
+  .personal-info {
+    width: 90%;
+  }
 }
