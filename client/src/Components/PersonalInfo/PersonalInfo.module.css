@@ -38,9 +38,6 @@
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   display: none;
   background-color: grey;
   opacity: 0.7;
@@ -48,8 +45,31 @@
 }
 .image-container:hover .overlay {
   display: flex;
+  align-items: center;
+}
+.image-container button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.image-container button:hover {
+  background-color: grey !important;
+  color: white !important;
+  opacity: 1;
+}
+.image-container:hover button {
+  animation: slidein 0.4s ease-out forwards;
 }
 
+@keyframes slidein {
+  0% {
+    margin-bottom: 0px;
+  }
+  100% {
+    margin-bottom: 20px;
+  }
+}
 .personal-info .header button {
   padding: 6px 15px;
   border: none;

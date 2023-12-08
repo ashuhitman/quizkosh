@@ -115,7 +115,7 @@ function PersonalInfo({ user, handleShowAlert }) {
             size="120px"
           />
           <div className={styles.overlay}>
-            <Button text="Upload Photo" />
+            <Button text="Upload" />
           </div>
         </div>
         <div>
