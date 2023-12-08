@@ -149,14 +149,26 @@ router.delete("/:id", authentication, async (req, res) => {
 
 // update test
 router.put("/:id", async (req, res) => {
+  const { id } = req.params; // Assuming you're passing the ID of the document to update
+  const { testName, subject, timer, pmarks, nmarks } = req.body; // Fields to update
+
   try {
-    const result = await Test.findByIdAndUpdate(req.params["id"], req.body);
-    if (result === null) {
-      return res.send({ error: "Id not found" });
+    const updatedTest = await Test.findByIdAndUpdate(
+      id,
+      { testName, subject, timer, pmarks, nmarks },
+      { new: true, runValidators: true }
+    );
+    console.log(updatedTest);
+
+    if (!updatedTest) {
+      return res.status(404).json({ message: "Test not found" });
     }
-    return res.send({ success: "Updated successfully" });
+
+    res
+      .status(201)
+      .json({ test: updatedTest, message: "Test updated successfully" });
   } catch (error) {
-    res.send({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 

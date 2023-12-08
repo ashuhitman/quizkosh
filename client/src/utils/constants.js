@@ -6,7 +6,7 @@ const API_BASE_URL =
 export const API_ENDPOINTS = {
   TESTS: API_BASE_URL + "/tests",
   TESTS_CREATE: API_BASE_URL + "/tests/create",
-  TEST_UPDATE: API_BASE_URL + "/tests/update/",
+  TESTS_UPDATE: API_BASE_URL + "/tests/",
   TESTS_DELETE: API_BASE_URL + "/tests/",
   QUESTIONS: API_BASE_URL + "/questions",
   QUESTIONS_ADD: API_BASE_URL + "/questions/add/",

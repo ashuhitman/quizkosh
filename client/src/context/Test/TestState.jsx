@@ -65,10 +65,10 @@ const testReducer = (state, action) => {
         ...state,
         visibleTests: action.payload,
       };
-    case actions.update_tests:
+    case actions.update_test:
       return {
         ...state,
-        tests: [...state.tests, action.payload.test],
+        test: action.payload.test,
       };
 
     case actions.reset:

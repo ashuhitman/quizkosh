@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+function isIntegerOrFloatWithoutFraction(value) {
+  return Number.isInteger(value) || (!isNaN(value) && value % 1 === 0);
+}
 
 const questionSchema = mongoose.Schema({
   question: { type: String, required: true, trim: true },
@@ -19,8 +22,8 @@ const testSchema = mongoose.Schema({
     required: true,
     default: 1,
     validate: {
-      validator: Number.isInteger,
-      message: "{VALUE} is not an integer value",
+      validator: isIntegerOrFloatWithoutFraction,
+      message: "{VALUE} is not an integer or float without fractional part",
     },
   },
   nmarks: {
@@ -28,8 +31,8 @@ const testSchema = mongoose.Schema({
     required: true,
     default: 0,
     validate: {
-      validator: Number.isInteger,
-      message: "{VALUE} is not an integer value",
+      validator: isIntegerOrFloatWithoutFraction,
+      message: "{VALUE} is not an integer or float without fractional part",
     },
   },
   timer: { type: String, required: true, trim: true },

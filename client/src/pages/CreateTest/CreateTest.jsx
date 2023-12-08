@@ -63,24 +63,18 @@ function CreateTest({ mode = "add" }) {
         setTestData(test.questions);
         setInputField(test.questions[0]);
       }
+
+      dispatch({ type: actions.update_test, payload: { test: test } });
     }
-    console.log("mode is " + mode);
   }, []);
 
   useEffect(() => {
-    console.log("running on currentpage chstart");
     if (lastVisistedQuestions.current > currentQuestion) {
       // update input field on previous button click
-      console.log("update input field on previous button click");
+
       setInputField(testData[currentQuestion - 1]);
     } else if (lastVisistedQuestions.current < currentQuestion) {
-      console.log(
-        "next button clicked",
-        lastVisistedQuestions.current,
-        currentQuestion
-      );
       if (typeof testData[currentQuestion - 1] === "undefined") {
-        console.log("reset input field");
         setInputField({
           question: "",
           options: [
@@ -98,7 +92,6 @@ function CreateTest({ mode = "add" }) {
   }, [currentQuestion]);
 
   const setInputField = (data) => {
-    console.log("set input field", mode, data);
     setQuestion(data.question);
     setOption1(data.options[0]);
     setOption2(data.options[1]);
@@ -130,11 +123,11 @@ function CreateTest({ mode = "add" }) {
     }
     // update question in database
     const updatedData = await updateQuestion(data);
-    console.log("updated data: ", updatedData);
+
     if (updatedData) data = updatedData;
     // add data to textData
     testData[currentQuestion - 1] = data;
-    console.log("testdata: ", testData);
+
     setTestData(testData);
     // save it to localStorage
     const test = JSON.parse(localStorage.getItem("test"));
@@ -147,8 +140,6 @@ function CreateTest({ mode = "add" }) {
     // update current question
 
     setCurrentQuestion(currentQuestion + 1);
-
-    console.log("next button:", testData);
   };
 
   const onPrevious = () => {
@@ -202,7 +193,6 @@ function CreateTest({ mode = "add" }) {
   };
 
   const onSubmit = (e) => {
-    console.log(testData);
     e.preventDefault();
 
     setShowAlert(true);
@@ -232,15 +222,15 @@ function CreateTest({ mode = "add" }) {
       return true;
     }
     const apiUrl = `${API_ENDPOINTS.QUESTIONS_ADD + testId}`;
-    console.log(apiUrl);
+
     try {
       axios.defaults.withCredentials = true;
       const result = await axios.post(apiUrl, testData);
-      console.log("result: ", result);
+
       if (result) {
         // get the data
         const test = result.data.data;
-        console.log(test);
+
         // add test to the list of my tests
         // add it to the myTest
         let myTest = testState.myTest;
@@ -249,7 +239,6 @@ function CreateTest({ mode = "add" }) {
           testState.totalPages.mytest === 0
             ? 0
             : testState.totalPages.mytest - 1;
-        console.log(myTest, testState, totalMyPage);
 
         if (myTest && myTest[0]) {
           const ln = !myTest[totalMyPage] ? 0 : myTest[totalMyPage].length;
@@ -259,7 +248,7 @@ function CreateTest({ mode = "add" }) {
             myTest[totalMyPage + 1][0] = test;
             totalMyPage = totalMyPage + 1;
           }
-          console.log(test, myTest, totalMyPage);
+
           dispatch({
             type: actions.save_mytest,
             payload: {
@@ -297,7 +286,7 @@ function CreateTest({ mode = "add" }) {
 
     if (currentQuestion <= testData.length) {
       const { _id: id, question, options } = testData[currentQuestion - 1];
-      console.log(options, testData[currentQuestion - 1]);
+
       const { _id: id1, ...rest1 } = options[0];
       const { _id: id2, ...rest2 } = options[1];
       const { _id: id3, ...rest3 } = options[2];
@@ -331,7 +320,7 @@ function CreateTest({ mode = "add" }) {
           success: true,
         });
       }
-      console.log("updated", data);
+
       return data;
     } catch (error) {
       console.log("error", error);
@@ -359,7 +348,7 @@ function CreateTest({ mode = "add" }) {
     try {
       const questionId = testData[currentQuestion - 1]._id;
       const url = `${API_ENDPOINTS.QUESTIONS_DELETE + testId}/${questionId}`;
-      console.log(url);
+
       axios.defaults.withCredentials = true;
       const result = await axios.delete(url);
       if (result) {
@@ -379,32 +368,44 @@ function CreateTest({ mode = "add" }) {
           type: actions.save_mytest,
           payload: { tests: mytest, visibleTest: testState.visibleTests },
         });
+
         // update testData
         setTestData(test.questions);
-        if (currentQuestion > testData.length) {
+        if (currentQuestion >= testData.length) {
           setInputField(emptyField);
         } else {
           setInputField(test.questions[currentQuestion - 1]);
         }
       }
-      console.log(result, url, questionId);
+      handleShowAlert({
+        show: true,
+        message: result.data.message,
+        success: true,
+      });
     } catch (error) {
       console.log("error", error);
+      handleShowAlert({
+        show: true,
+        message: error.response.data.message,
+        success: false,
+      });
     }
     return true;
   };
 
   return (
     <div className="create-test-container">
-      <Modal leftFun={() => setModal(false)} modal={modal} mode={mode} />
+      <Modal
+        leftFun={() => setModal(false)}
+        modal={modal}
+        mode={mode}
+        handleShowAlert={handleShowAlert}
+      />
       <Header home={!isValidToken} showAlert={setShowAlert}>
         <div
           className="edit-circle"
           onClick={() => {
             setModal(true);
-            console.log("edit clciked");
-            // localStorage.setItem("test", JSON.stringify(cardData));
-            // navigate("/tests/edit");
           }}
         >
           <MdEditDocument />
@@ -446,7 +447,9 @@ function CreateTest({ mode = "add" }) {
 
           <div className="form-group question-title">
             <div>
-              <strong>{currentQuestion}.</strong>
+              <strong>
+                {currentQuestion}/{mode === "edit" && testData.length}
+              </strong>
 
               <textarea
                 type="text"

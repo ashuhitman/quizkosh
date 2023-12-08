@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./Modal.module.css";
 import Button from "../Button/Button";
 import OptionField from "../OptionField/OptionField";
@@ -9,19 +9,31 @@ import { API_ENDPOINTS, MIN_QUESTION } from "../../utils/constants";
 import Loader from "../Loader/Loader";
 import { useAuth } from "../../context/Auth/AuthState";
 import TestContext from "../../context/Test/TestContext";
+import { actions } from "../../context/Test/TestState";
+const initialState = {
+  testName: "",
+  subject: "",
+  pmarks: "",
+  nmarks: "",
+  timer: "",
+};
 
-function Modal({ leftFun, rightFun, modal, mode = "add" }) {
+function Modal({
+  leftFun,
+  rightFun,
+  modal,
+  mode = "add",
+
+  handleShowAlert,
+}) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const { testState, dispatch } = useContext(TestContext);
+  const data = testState.test;
 
   // form values
-  const [formValues, setFormValues] = useState({
-    testName: "",
-    subject: "",
-    pmarks: "",
-    nmarks: "",
-    timer: "",
-  });
+  const [formValues, setFormValues] = useState(initialState);
   // form errors
   const [formErrors, setFormErrors] = useState({
     testName: "",
@@ -30,41 +42,54 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
     timer: "",
   });
 
-  const submitFun = (e) => {
+  const submitFun = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     const [isSubmit, errors] = validation(formValues);
     if (isSubmit) {
-      console.log(formValues);
-
       // show loader
       setIsLoading(true);
       // get token
       const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       // add test info to database
 
       axios.defaults.withCredentials = true;
-      axios
-        .post(API_ENDPOINTS.TESTS_CREATE, formValues, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          const test = response.data.data;
-          console.log("API Response:", test);
+      try {
+        const response =
+          mode === "edit"
+            ? await axios.put(
+                API_ENDPOINTS.TESTS_UPDATE + data._id,
+                formValues,
+                headers
+              )
+            : await axios.post(API_ENDPOINTS.TESTS_CREATE, formValues, headers);
+        const test = response.data.test;
 
-          // save data locally
-          localStorage.setItem("test", JSON.stringify(test));
-          // navigate to create test page
-          navigate("/tests/create");
-        })
-        .catch((error) => {
-          console.error("Error", error);
-          setIsLoading(false);
+        // save data locally
+        localStorage.setItem("test", JSON.stringify(test));
+        dispatch({ type: actions.update_test, payload: { test: test } });
+        // navigate to create test page
+        if (mode !== "edit") navigate("/tests/create");
+        handleShowAlert({
+          show: true,
+          success: true,
+          message: response.data.message,
         });
+        leftFun();
+      } catch (error) {
+        console.error("Error", error);
+        setMessage(error.response.data.message);
+      }
+      setIsLoading(false);
     }
     setFormErrors({ ...formErrors, ...errors });
+    // setFormValues(initialState);
   };
 
   const handleInputChange = (e) => {
@@ -72,7 +97,18 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
     setFormErrors({ ...formErrors, [name]: "" });
     setFormValues({ ...formValues, [name]: value });
   };
-
+  useEffect(() => {
+    console.log("data: ", data);
+    if (mode === "edit" && data) {
+      setFormValues({
+        testName: data.testName,
+        subject: data.subject,
+        timer: data.timer,
+        pmarks: data.pmarks,
+        nmarks: data.nmarks,
+      });
+    }
+  }, [data]);
   if (!modal) return <></>;
   return (
     <div className={styles.modal}>
@@ -82,6 +118,7 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
       >
         <div className={styles["loader-container"]}>
           {isLoading && <Loader />}
+          {<p className={styles.error}>{message}</p>}
         </div>
         <div className={styles["modal-header"]}>Test Details</div>
         <div className={styles["modal-body"]}>
@@ -93,6 +130,7 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
                 name="testName"
                 onChange={handleInputChange}
                 maxLength={32}
+                value={formValues.testName}
               />
               <p className={styles.error}>{formErrors.testName}</p>
             </div>
@@ -102,6 +140,7 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
                 placeholder="Subject Name"
                 name="subject"
                 onChange={handleInputChange}
+                value={formValues.subject}
               />
               <p className={styles.error}>{formErrors.subject}</p>
             </div>
@@ -147,7 +186,10 @@ function Modal({ leftFun, rightFun, modal, mode = "add" }) {
                 ph="8px"
                 py="5px"
                 radius="2px"
-                clickFun={leftFun}
+                clickFun={() => {
+                  leftFun();
+                  setIsLoading(false);
+                }}
               />
               {}
               <span style={{ margin: "0 10px" }} />
