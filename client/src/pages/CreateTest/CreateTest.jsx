@@ -134,6 +134,8 @@ function CreateTest({ mode = "add" }) {
     test.questions = testData;
     localStorage.setItem("test", JSON.stringify(test));
 
+    updateTestInTestState(test);
+
     // save current question no before upadting it
     lastVisistedQuestions.current = currentQuestion;
 
@@ -199,28 +201,6 @@ function CreateTest({ mode = "add" }) {
   };
 
   const addQuestions = async () => {
-    if (mode === "edit") {
-      const test = JSON.parse(localStorage.getItem("test") || null);
-      if (test) {
-        const testData = testState.myTest;
-        for (let i = 0; i < testData.length; i++) {
-          for (let j = 0; j < testData[i].length; j++) {
-            if (testData[i][j]._id === test._id) {
-              testData[i][j] = test;
-              break;
-            }
-          }
-        }
-        dispatch({
-          type: actions.save_mytest,
-          payload: {
-            tests: testData,
-            visibleTest: testState.visibleTests,
-          },
-        });
-      }
-      return true;
-    }
     const apiUrl = `${API_ENDPOINTS.QUESTIONS_ADD + testId}`;
 
     try {
@@ -270,6 +250,29 @@ function CreateTest({ mode = "add" }) {
   };
   const handleShowAlert = (alert) => {
     setAlertData({ ...alertData, ...alert });
+  };
+
+  const updateTestInTestState = (test) => {
+    if (mode === "edit") {
+      if (test) {
+        const testData = testState.myTest;
+        for (let i = 0; i < testData.length; i++) {
+          for (let j = 0; j < testData[i].length; j++) {
+            if (testData[i][j]._id === test._id) {
+              testData[i][j] = test;
+              break;
+            }
+          }
+        }
+        dispatch({
+          type: actions.save_mytest,
+          payload: {
+            tests: testData,
+            visibleTest: testState.visibleTests,
+          },
+        });
+      }
+    }
   };
   const updateQuestion = async (data) => {
     // update the question in database
@@ -605,19 +608,21 @@ function CreateTest({ mode = "add" }) {
                 clickFun={onNext}
               />
 
-              <Button
-                type="button"
-                text="Submit"
-                disabled={!enableSubmitBtn}
-                clickFun={onSubmit}
-                // style={{ padding: " 6px 10px" }}
-              >
-                <input
-                  style={{ marginRight: "10px" }}
-                  type="checkbox"
-                  onChange={() => setEnableSubmitBtn((prev) => !prev)}
-                />
-              </Button>
+              {mode === "add" && (
+                <Button
+                  type="button"
+                  text="Submit"
+                  disabled={!enableSubmitBtn}
+                  clickFun={onSubmit}
+                  // style={{ padding: " 6px 10px" }}
+                >
+                  <input
+                    style={{ marginRight: "10px" }}
+                    type="checkbox"
+                    onChange={() => setEnableSubmitBtn((prev) => !prev)}
+                  />
+                </Button>
+              )}
             </div>
           </div>
         </form>
