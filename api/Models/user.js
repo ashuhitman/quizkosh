@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: [true, "Password is required"] },
   mobile: { type: String },
   refreshTokens: [String],
+  image: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);

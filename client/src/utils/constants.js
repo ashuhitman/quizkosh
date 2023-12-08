@@ -25,6 +25,7 @@ export const AUTH_API_ENDPOINTS = {
 export const USER_ENDPOINTS = {
   UPDATE: API_BASE_URL + "/auth/",
   FETCH_USER_INFO: API_BASE_URL + "/auth/fetch/",
+  UPLOAD_IMAGE: API_BASE_URL + "/auth/uploads",
 };
 
 export const MIN_QUESTION = 2;

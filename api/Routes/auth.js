@@ -53,6 +53,33 @@ router.put("/:id", async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 });
+
+// upload images
+router.post("/uploads", async (req, res) => {
+  const { id, image } = req.body;
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: id },
+      { $set: { image } },
+      { new: true } // To return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "Image uploaded successfully",
+      image: updatedUser.image,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+});
+// signup users
 router.post("/signup", async (req, res) => {
   console.log("sigining up user");
   try {

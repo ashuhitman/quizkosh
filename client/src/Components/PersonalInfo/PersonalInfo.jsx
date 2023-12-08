@@ -8,17 +8,43 @@ import Input from "../Input/Input";
 import axios from "axios";
 import Loader from "../../Components/Loader/Loader";
 import { API_ENDPOINTS, USER_ENDPOINTS } from "../../utils/constants";
+import { convertToBase64 } from "../../utils/convertToBase64";
+import avatar from "../../../src/assets/profilepic.png";
 
 function PersonalInfo({ user, handleShowAlert }) {
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [edit, setEdit] = useState(false);
 
   const [userInfo, setUserInfo] = useState({
     email: "",
     mobile: "",
     name: "",
+    image: "",
   });
   const [error, setError] = useState({ mobile: "", name: "" });
+  const handleFileUpload = async (e) => {
+    // upload the file to the server
+    setUploading(true);
+    try {
+      const file = e.target.files[0];
+      const base64 = await convertToBase64(file);
+
+      axios.defaults.withCredentials = true;
+      const response = await axios.post(USER_ENDPOINTS.UPLOAD_IMAGE, {
+        id: user._id,
+        image: base64,
+      });
+      if (response) {
+        const { image } = response.data;
+        setUserInfo({ ...userInfo, image });
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+    setUploading(false);
+  };
+
   const onChangeHandler = (e) => {
     setError({ ...error, [e.target.name]: "" });
     setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
@@ -35,7 +61,6 @@ function PersonalInfo({ user, handleShowAlert }) {
       if (updatedUser) {
         setUserInfo(updatedUser);
       }
-      console.log(updatedUser);
 
       setEdit(false);
       setLoading(false);
@@ -69,7 +94,6 @@ function PersonalInfo({ user, handleShowAlert }) {
       .then((response) => {
         const data = response.data.user;
         if (data) {
-          console.log("personal info: ", data);
           setUserInfo(data);
         }
       })
@@ -110,12 +134,40 @@ function PersonalInfo({ user, handleShowAlert }) {
 
       <div className={styles.header}>
         <div className={styles["image-container"]}>
-          <CircularImage
-            imageUrl="https://m.media-amazon.com/images/I/81M8l5kVdVL._SL1500_.jpg"
-            size="120px"
-          />
+          {uploading && (
+            <div
+              style={{
+                position: "absolute",
+                top: "0px",
+                left: "0px",
+                bottom: "0px",
+                right: "0px",
+                backgroundColor: "grey",
+                opacity: "0.7",
+                borderRadius: "50%",
+              }}
+            >
+              <Loader
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+              />
+            </div>
+          )}
+          <CircularImage imageUrl={userInfo.image || avatar} size="120px" />
           <div className={styles.overlay}>
-            <Button text="Upload" />
+            <label htmlFor="file-upload">Upload</label>
+            <input
+              type="file"
+              name="file"
+              id="file-upload"
+              accept=".jpeg, .png, .jpg"
+              onChange={handleFileUpload}
+            />
           </div>
         </div>
         <div>

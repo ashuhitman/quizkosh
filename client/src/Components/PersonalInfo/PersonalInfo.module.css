@@ -47,18 +47,24 @@
   display: flex;
   align-items: center;
 }
-.image-container button {
+.image-container label {
   position: absolute;
+  padding: 2px 4px;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  background-color: rgba(236, 126, 34, 1);
+  border-radius: 3px;
+  color: white;
+  border: 1px solid rgba(201, 97, 11, 1);
+  cursor: pointer;
 }
-.image-container button:hover {
-  background-color: grey !important;
+.image-container label:hover {
+  background-color: rgba(120, 57, 5, 1);
   color: white !important;
   opacity: 1;
 }
-.image-container:hover button {
+.image-container:hover label {
   animation: slidein 0.4s ease-out forwards;
 }
 
@@ -70,14 +76,10 @@
     margin-bottom: 20px;
   }
 }
-.personal-info .header button {
-  padding: 6px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
 
+input[type="file"] {
+  display: none;
+}
 .personal-info .body {
   flex: 1;
   display: flex;
