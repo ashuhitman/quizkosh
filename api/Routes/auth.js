@@ -127,6 +127,7 @@ router.post("/login", async (req, res) => {
         const payload = { ...user.toJSON() };
         payload.password = undefined;
         payload.refreshTokens = undefined;
+        payload.image = undefined;
         // generate access token
 
         const token = generateAccessToken(payload);
