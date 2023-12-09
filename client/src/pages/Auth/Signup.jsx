@@ -41,6 +41,7 @@ function Signup({ changeAuthState, handleShowAlert, loading, setLoading }) {
     console.log("data", data);
     // else submit data
     try {
+      axios.defaults.withCredentials = true;
       const result = await axios.post(
         "http://127.0.0.1:8000/auth/signup",
         data

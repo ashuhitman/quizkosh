@@ -50,7 +50,7 @@
 .auth form {
   display: flex;
   flex-direction: column;
-  row-gap: 0px;
+  row-gap: 20px;
 }
 .loginForm {
   margin-top: 15px;
