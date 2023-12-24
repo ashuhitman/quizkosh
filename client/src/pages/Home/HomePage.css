@@ -64,6 +64,5 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     /* margin: 0px 0px 40px 0px !important; */
-    border: 2px solid red;
   }
 }
