@@ -36,7 +36,7 @@
 }
 
 .outer-test-container {
-  flex: 1;
+  /* flex: 1; */
   display: flex;
   justify-content: center;
 }
@@ -63,6 +63,7 @@
   .test-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    margin: 0px 0px 40px 0px !important;
+    /* margin: 0px 0px 40px 0px !important; */
+    border: 2px solid red;
   }
 }
