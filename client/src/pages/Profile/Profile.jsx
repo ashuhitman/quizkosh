@@ -2,38 +2,30 @@ import React, { useContext, useEffect, useState } from "react";
 import "./Profile.css";
 import Header from "../../Components/Header/Header";
 import { useAuth } from "../../context/Auth/AuthState";
-import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Components/Dropdown/Dropdown";
-import { FaFilter, FaStar } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
 import { API_ENDPOINTS, subjects } from "../../utils/constants";
 import axios from "axios";
 import TestContext from "../../context/Test/TestContext";
 import TestCard from "../../Components/TestCard/TestCard";
-import { actions } from "../../context/Test/TestState";
-import CircularImage from "../../Components/CircularImage/CircularImage";
 import Pagination from "../../Components/Pagination/Pagination";
 import HomePageLoader from "../../Components/HomePageLoader/HomePageLoader";
 import { MdAddCircle } from "react-icons/md";
 import CircularComponent from "../../Components/CircularComponent/CircularComponent";
-import { FcNext, FcPrevious } from "react-icons/fc";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import Modal from "../../Components/Modal/Modal";
-import Loader from "../../Components/Loader/Loader";
-import { MdEmail } from "react-icons/md";
-import { MdContactPhone } from "react-icons/md";
-import { MdEdit } from "react-icons/md";
-import { toSentenceCase } from "../../utils/utils";
+import { isSubArrayNotEmpty, replaceArrayElements } from "../../utils/utils";
 import PersonalInfo from "../../Components/PersonalInfo/PersonalInfo";
 import AlertMessage from "../../Components/AlertMessage/AlertMessage";
+import useNetwork from "../../Hooks/useNetwork";
 function Profile() {
   const { user } = useAuth();
-  console.log(user);
+  const { handleRequest } = useNetwork();
   const [loading, setLoading] = useState(false);
-  const [userLoading, setUserLoading] = useState(false);
   const [filter, setFilter] = useState(0);
   const [selectedOptions, onOptionSelect] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { testState, dispatch } = useContext(TestContext);
+  const { testState, dispatch, updateTestState } = useContext(TestContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [modal, setModal] = useState(false);
   const [alertData, setAlertData] = useState({
@@ -43,53 +35,56 @@ function Profile() {
     style: undefined,
   });
 
+  // console.log(testState);
+
   useEffect(() => {
     // get user data
-    // getUserData();
     getUserTests();
   }, [currentPage, filter]);
-  const getUserData = async () => {};
 
   const getUserTests = async () => {
     console.log(filter, currentPage);
-    // if (filter !== 1) return;
-    setLoading(true);
-    // check if current page data is already loaded
+
+    // get page size
+    const pageSize = testState.mobile ? 4 : 8;
+    //get user test data
     const data = testState.myTest;
-    if (data[currentPage - 1] && data[currentPage - 1].length > 0) {
-      dispatch({
-        type: actions.update_visibile_tests,
-        payload: data[currentPage - 1],
-      });
-      setLoading(false);
+    // start index
+    const start = (currentPage - 1) * pageSize;
+    // end index
+    const end = start + pageSize;
+    // check if user test for this page is already loaded
+    if (isSubArrayNotEmpty(data, start, end)) {
+      console.log("subarray is not empty");
+      updateTestState({ visibleTests: data.slice(start, end) });
       return;
     }
+    // if first time rendering, fetch user test data
     try {
-      // else fetch user test data
-      const pageSize = testState.mobile ? 4 : 8;
+      setLoading(true);
+      console.log("fetching user test data...");
       const url = `${API_ENDPOINTS.TESTS}?page=${currentPage}&pageSize=${pageSize}`;
-      axios.defaults.withCredentials = true;
       // fetch user tests data
-      const response = await axios.post(url, { id: user._id });
+      const response = await handleRequest(url, "POST", { id: user._id });
       console.log("user tests: ", response.data);
       // save user tests data
-
-      data[currentPage - 1] = response.data.data;
-      dispatch({
-        type: actions.save_mytest,
-        payload: {
-          tests: data,
-          visibleTest: response.data.data,
-          totalPages: {
-            ...testState.totalPages,
-            mytest: response.data.totalPages,
-          },
+      const tests = response.data;
+      // append tests data
+      const updatedData = replaceArrayElements(data, tests, start, end);
+      const payload = {
+        visibleTests: tests,
+        myTest: updatedData,
+        totalPages: {
+          mytest: response.totalPages,
         },
-      });
+      };
+      // update user tests data
+      updateTestState(payload);
     } catch (error) {
       console.log("error: ", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const goToPrevPage = () => {
@@ -131,7 +126,6 @@ function Profile() {
           className={filter === 1 ? "filter-item" : ""}
           onClick={() => {
             setFilter(1);
-            console.log("clicked");
           }}
         >
           My Test
@@ -174,7 +168,7 @@ function Profile() {
                       <GrPrevious color="#2c3e50" />
                     </CircularComponent>
                   )}
-                  <div class="spacer"></div>
+                  <div className="spacer"></div>
 
                   {currentPage < testState.totalPages.mytest && (
                     <CircularComponent

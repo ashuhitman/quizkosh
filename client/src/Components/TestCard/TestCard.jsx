@@ -3,21 +3,23 @@ import styles from "./TestCard.module.css";
 import { useNavigate } from "react-router-dom";
 import TestContext from "../../context/Test/TestContext";
 import { actions } from "../../context/Test/TestState";
-import { getNewArray } from "../../utils/utils";
+import { getNewArray, onTestDelete } from "../../utils/utils";
 import { MdEditDocument } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { API_ENDPOINTS } from "../../utils/constants";
 import axios from "axios";
 import { useAuth } from "../../context/Auth/AuthState";
 import Alert from "../Alert/Alert";
+import useNetwork from "../../Hooks/useNetwork";
 
-function TestCard({ cardData, disabled, currentPage, user }) {
+function TestCard({ cardData, disabled, user, currentPage }) {
   const navigate = useNavigate();
   const { _id, testName, timer, questionAmount, subject, questions } = cardData;
-  const { testState, dispatch } = useContext(TestContext);
+  const { testState, dispatch, updateTestState } = useContext(TestContext);
+  const { handleRequest } = useNetwork();
 
   const [showAlert, setShowAlert] = useState(false);
-  useEffect(() => {}, []);
+
   const goToQuizPage = () => {
     //clear local storage
     localStorage.removeItem("test");
@@ -36,34 +38,35 @@ function TestCard({ cardData, disabled, currentPage, user }) {
   };
 
   const deleteTest = async () => {
+    const pageSize = testName.mobile ? 4 : 8;
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
     try {
       // url
       const url = `${API_ENDPOINTS.TESTS_DELETE}${cardData._id}`;
-      const token = localStorage.getItem("token");
 
       // delete the test from database
-      axios.defaults.withCredentials = true;
-      await axios.delete(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      // delete test from test state
-      const updatedTests = testState.myTest;
-      console.log(updatedTests);
-      updatedTests[currentPage - 1] = updatedTests[currentPage - 1].filter(
-        (test) => test._id !== cardData._id
-      );
-      dispatch({
-        type: actions.save_mytest,
-        payload: {
-          tests: updatedTests,
-          visibleTest: updatedTests[currentPage - 1],
-        },
-      });
+      const response = await handleRequest(url, "DELETE");
+      if (response) {
+        const result = onTestDelete(
+          testState.myTest,
+          cardData._id,
+          start,
+          end,
+          testState.mobile ? 4 : 8,
+          testState.totalPages.mytest
+        );
+        updateTestState({
+          myTest: result.newArray,
+          visibleTests: result.newArray.slice(start, end),
+          totalPages: result.totalPageNumber,
+        });
+        console.log(result);
+      }
+
       return true;
     } catch (error) {
-      console.log("error: ", error);
+      console.error("error: ", error);
       return false;
     }
   };
@@ -90,10 +93,7 @@ function TestCard({ cardData, disabled, currentPage, user }) {
             <div
               className={styles.circle}
               onClick={() => {
-                dispatch({
-                  type: actions.update_test,
-                  payload: { test: cardData },
-                });
+                localStorage.setItem("test", JSON.stringify(cardData));
                 navigate("/tests/edit/" + cardData._id);
               }}
             >

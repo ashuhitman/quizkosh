@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./Modal.module.css";
 import Button from "../Button/Button";
-import OptionField from "../OptionField/OptionField";
 import { validation } from "../../utils/validation";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { API_ENDPOINTS, MIN_QUESTION } from "../../utils/constants";
 import Loader from "../Loader/Loader";
-import { useAuth } from "../../context/Auth/AuthState";
 import TestContext from "../../context/Test/TestContext";
-import { actions } from "../../context/Test/TestState";
+import { onTestAdd } from "../../utils/utils";
+import useNetwork from "../../Hooks/useNetwork";
 const initialState = {
   testName: "",
   subject: "",
@@ -18,19 +16,13 @@ const initialState = {
   timer: "",
 };
 
-function Modal({
-  leftFun,
-  rightFun,
-  modal,
-  mode = "add",
-
-  handleShowAlert,
-}) {
+function Modal({ leftFun, rightFun, modal, mode = "add", handleShowAlert }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const { testState, dispatch } = useContext(TestContext);
-  const data = testState.test;
+  const { handleRequest } = useNetwork();
+  const { testState, updateTestState } = useContext(TestContext);
+  const data = JSON.parse(localStorage.getItem("test"));
 
   // form values
   const [formValues, setFormValues] = useState(initialState);
@@ -50,43 +42,44 @@ function Modal({
     if (isSubmit) {
       // show loader
       setIsLoading(true);
-      // get token
-      const token = localStorage.getItem("token");
-      const headers = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      // add test info to database
 
-      axios.defaults.withCredentials = true;
       try {
         const response =
           mode === "edit"
-            ? await axios.put(
+            ? await handleRequest(
                 API_ENDPOINTS.TESTS_UPDATE + data._id,
-                formValues,
-                headers
+                "PUT",
+                formValues
               )
-            : await axios.post(API_ENDPOINTS.TESTS_CREATE, formValues, headers);
-        const test = response.data.test;
-        console.log(test);
-
-        // save data locally
-        // localStorage.setItem("test", JSON.stringify(test));
-        dispatch({ type: actions.update_test, payload: { test: test } });
+            : await handleRequest(
+                API_ENDPOINTS.TESTS_CREATE,
+                "POST",
+                formValues
+              );
+        const test = response.test;
+        const pageSize = testState.pageSize;
+        // add test to global store
+        const { tests, myTest, latest, totalPages } = onTestAdd(
+          testState,
+          test,
+          pageSize
+        );
+        updateTestState({ tests, myTest, latest, totalPages });
         // navigate to create test page
-        if (mode !== "edit") navigate("/tests/create/" + test._id);
+        localStorage.setItem("test", JSON.stringify(test));
+        if (mode !== "edit") {
+          navigate("/tests/create/" + test._id);
+        }
         if (handleShowAlert)
           handleShowAlert({
             show: true,
             success: true,
-            message: response.data.message,
+            message: response.message,
           });
         leftFun();
       } catch (error) {
         console.error("Error", error);
-        setMessage(error.response.data.message);
+        setMessage(error.response.message);
       }
       setIsLoading(false);
     }
@@ -100,7 +93,6 @@ function Modal({
     setFormValues({ ...formValues, [name]: value });
   };
   useEffect(() => {
-    console.log("data: ", data);
     if (mode === "edit" && data) {
       setFormValues({
         testName: data.testName,

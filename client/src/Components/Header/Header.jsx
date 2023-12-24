@@ -8,7 +8,7 @@ import { useAuth } from "../../context/Auth/AuthState";
 import Alert from "../Alert/Alert";
 function Header({ children }) {
   const [showAlert, setShowAlert] = useState(false);
-  const { login, logout, loading, user } = useAuth();
+  const { logout, loading, user } = useAuth();
 
   return (
     <>

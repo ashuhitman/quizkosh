@@ -12,20 +12,21 @@ import Pagination from "../../Components/Pagination/Pagination";
 import { useAuth } from "../../context/Auth/AuthState";
 import { parseJwt } from "../../utils/parsejwt";
 import Alert from "../../Components/Alert/Alert";
-import useFetch from "../../Hooks/useFetch";
+
 import { Link } from "react-router-dom";
 import { MdAddCircle } from "react-icons/md";
 import Modal from "../../Components/Modal/Modal";
 import { FaFilter } from "react-icons/fa";
 import Dropdown from "../../Components/Dropdown/Dropdown";
+import { isSubArrayNotEmpty, replaceArrayElements } from "../../utils/utils";
 
 function HomePage() {
   // test context
-  const { testState, dispatch } = useContext(TestContext);
+  const { testState, updateTestState } = useContext(TestContext);
+
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
-  // console.log("testState", testState);
 
   const [visibleTest, setVisibleTest] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
@@ -52,85 +53,58 @@ function HomePage() {
     }
   };
 
-  const fetchData = async (url, action) => {
-    setLoading(true);
+  const fetchActiveTestData = async () => {
+    // get page size
+    const pageSize = testState.pageSize;
+    // start index
+    const start = (currentPage - 1) * pageSize;
+    // end index
+    const end = start + pageSize;
+    const data = visibleTest === 0 ? testState.tests : testState.latest;
+    // check the page size if page item is less than pageSize
+    if (isSubArrayNotEmpty(data, start, end)) {
+      updateTestState({ visibleTests: data.slice(start, end) });
+      return;
+    }
+    const url =
+      visibleTest === 0
+        ? `${API_ENDPOINTS.TESTS}?page=${currentPage}&pageSize=${pageSize}`
+        : `${API_ENDPOINTS.TESTS}/latest?page=${currentPage}&pageSize=${pageSize}`;
 
     try {
+      console.log("fetching...");
+      setLoading(true);
+      // fetch data
       axios.defaults.withCredentials = true;
-
       const response = await axios.get(url);
 
-      let data;
-      let actionType;
-      let pages;
-      if (action === 0) {
-        data = testState.tests;
-        data[currentPage - 1] = response.data.data;
-        actionType = actions.save_tests;
-        pages = { alltests: response.data.totalPages };
-      } else if (action === 1) {
-        data = testState.latest;
-        data[currentPage - 1] = response.data.data;
-        actionType = actions.save_latest;
-        pages = { latest: response.data.totalPages };
-      } else if (action === 2) {
-        data = testState.myTest;
-        data[currentPage - 1] = response.data.data;
-        actionType = actions.save_mytest;
-        pages = { mytest: response.data.totalPages };
-      }
+      const tests = response.data.data;
 
-      setLoading(false);
-      dispatch({
-        type: actionType,
-        payload: {
-          tests: data,
-          visibleTest: response.data.data,
-          totalPages: pages,
+      // append tests
+      const updatedData = replaceArrayElements(data, tests, start, end);
+
+      const payload = {
+        visibleTests: tests,
+        tests: visibleTest === 0 ? updatedData : testState.tests,
+        latest: visibleTest === 1 ? updatedData : testState.latest,
+        totalPages: {
+          alltests:
+            visibleTest === 0
+              ? response.data.totalPages
+              : testState.totalPages.alltests,
+          latest:
+            visibleTest === 1
+              ? response.data.totalPages
+              : testState.totalPages.latest,
         },
-      });
-    } catch (error) {
-      setLoading(false);
-      console.log("error", error);
-    }
-  };
+      };
+      // update user tests data
 
-  const fetchActiveTestData = () => {
-    // check if mobile
-    const pageSize = testState.pageSize;
-    if (visibleTest === 0) {
-      if (
-        testState.tests[currentPage - 1] &&
-        testState.tests[currentPage - 1].length > 0
-      ) {
-        dispatch({
-          type: actions.update_visibile_tests,
-          payload: testState.tests[currentPage - 1],
-        });
-        setLoading(false);
-        return;
-      }
-      fetchData(
-        `${API_ENDPOINTS.TESTS}?page=${currentPage}&pageSize=${pageSize}`,
-        0
-      );
-    } else if (visibleTest === 1) {
-      if (
-        testState.latest[currentPage - 1] &&
-        testState.latest[currentPage - 1].length > 0
-      ) {
-        dispatch({
-          type: actions.update_visibile_tests,
-          payload: testState.latest[currentPage - 1],
-        });
-        setLoading(false);
-        return;
-      }
-      fetchData(
-        `${API_ENDPOINTS.TESTS}/latest?page=${currentPage}&pageSize=${pageSize}`,
-        1
-      );
+      updateTestState(payload);
+    } catch (error) {
+      console.error("error: ", error);
     }
+    setLoading(false);
   };
 
   const setActiveTest = (activeTest) => {

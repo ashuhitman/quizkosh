@@ -16,13 +16,16 @@ import { MdEditDocument } from "react-icons/md";
 import AlertMessage from "../../Components/AlertMessage/AlertMessage";
 import CircularComponent from "../../Components/CircularComponent/CircularComponent";
 import Loader from "../../Components/Loader/Loader";
+import { onTestUpdate } from "../../utils/utils";
+
+import useNetwork from "../../Hooks/useNetwork";
 function CreateTest({ mode = "add" }) {
-  const { login, logout, isValidToken, token, user } = useAuth();
+  const { handleRequest } = useNetwork();
 
   const navigate = useNavigate();
 
   // test context
-  const { testState, dispatch } = useContext(TestContext);
+  const { testState, dispatch, updateTestState } = useContext(TestContext);
   const { testId } = useParams();
 
   // const [isLoading, testDat] = useNetwork(location);
@@ -60,33 +63,11 @@ function CreateTest({ mode = "add" }) {
   }, []);
 
   const fetchTestData = async (testId) => {
-    let test = testState.test;
-    console.log(test, testId);
-    if (!test) {
-      setloading(true);
-      try {
-        const result = await axios.get(API_ENDPOINTS.TESTS + "/" + testId);
-        test = result.data.test;
-        console.log(test);
-        if (test) {
-          dispatch({
-            type: actions.update_test,
-            payload: { test: test },
-          });
-        }
-        setloading(false);
-      } catch (error) {
-        console.log("error: ", error);
-        setloading(false);
-      }
-    }
-    console.log(test, test.questions);
+    const test = JSON.parse(localStorage.getItem("test") || null);
     if (test.questions[0]) {
-      console.log(test.questions[0]);
       setTestData(test.questions);
       setInputField(test.questions[0]);
     }
-    localStorage.setItem("test", JSON.stringify(test));
   };
 
   useEffect(() => {
@@ -226,39 +207,17 @@ function CreateTest({ mode = "add" }) {
 
     try {
       axios.defaults.withCredentials = true;
-      const result = await axios.post(apiUrl, testData);
+      // const result = await axios.post(apiUrl, testData);
+      const result = await handleRequest(apiUrl, "POST", testData);
 
       if (result) {
         // get the data
-        const test = result.data.data;
+        const test = result.data;
 
         // add test to the list of my tests
         // add it to the myTest
-        let myTest = testState.myTest;
+        updateTestInTestState(test);
 
-        let totalMyPage =
-          testState.totalPages.mytest === 0
-            ? 0
-            : testState.totalPages.mytest - 1;
-
-        if (myTest && myTest[0]) {
-          const ln = !myTest[totalMyPage] ? 0 : myTest[totalMyPage].length;
-          if (ln < testState.pageSize) {
-            myTest[totalMyPage][ln + 1] = test;
-          } else if (ln === testState.pageSize) {
-            myTest[totalMyPage + 1][0] = test;
-            totalMyPage = totalMyPage + 1;
-          }
-
-          dispatch({
-            type: actions.save_mytest,
-            payload: {
-              tests: myTest,
-              visibleTest: testState.tests[0],
-              totalPages: { ...testState.totalPages, mytest: totalMyPage },
-            },
-          });
-        }
         localStorage.removeItem("test");
         setShowAlert(false);
         // navigate to homepage
@@ -274,39 +233,11 @@ function CreateTest({ mode = "add" }) {
   };
 
   const updateTestInTestState = (test) => {
-    if (mode === "edit") {
-      if (test) {
-        const testData = testState.myTest;
-        for (let i = 0; i < testData.length; i++) {
-          for (let j = 0; j < testData[i].length; j++) {
-            if (testData[i][j]._id === test._id) {
-              testData[i][j] = test;
-              break;
-            }
-          }
-        }
-        dispatch({
-          type: actions.save_mytest,
-          payload: {
-            tests: testData,
-            visibleTest: testState.visibleTests,
-          },
-        });
-      }
-    }
+    const { tests, myTest, latest } = onTestUpdate(test._id, testState, test);
+    updateTestState({ tests, myTest, latest });
   };
   const updateQuestion = async (data) => {
     // update the question in database
-    // let data = {
-    //   question: question,
-    //   options: [
-    //     { text: option1.text, isAnswer: option1.isAnswer },
-    //     { text: option2.text, isAnswer: option2.isAnswer },
-    //     { text: option3.text, isAnswer: option3.isAnswer },
-    //     { text: option4.text, isAnswer: option4.isAnswer },
-    //   ],
-    // };
-    // check if data has been changed
 
     if (currentQuestion <= testData.length) {
       const { _id: id, question, options } = testData[currentQuestion - 1];
@@ -337,8 +268,10 @@ function CreateTest({ mode = "add" }) {
         }
 
         axios.defaults.withCredentials = true;
-        const result = await axios.put(url, data);
-        data = result.data.data;
+        // const result = await axios.put(url, data);
+        const result = await handleRequest(url, "PUT", testData);
+        // console.log(`created test - ${mode}:`, result);
+        data = result.data;
         handleShowAlert({
           show: true,
           message: `Question no ${currentQuestion} updated`,
@@ -361,7 +294,7 @@ function CreateTest({ mode = "add" }) {
   };
 
   const deleteQuestion = async () => {
-    console.log("deleting question");
+    // console.log("deleting question");
     const emptyField = {
       question: "",
       options: [
@@ -375,11 +308,10 @@ function CreateTest({ mode = "add" }) {
     try {
       const questionId = testData[currentQuestion - 1]._id;
       const url = `${API_ENDPOINTS.QUESTIONS_DELETE + testId}/${questionId}`;
-
-      axios.defaults.withCredentials = true;
-      const result = await axios.delete(url);
+      const result = await handleRequest(url, "DELETE");
+      // const result = await axios.delete(url);
       if (result) {
-        const test = result.data.test;
+        const test = result.test;
         // update test in local storage
         localStorage.setItem("test", JSON.stringify(test));
         // update test in testState
@@ -406,14 +338,14 @@ function CreateTest({ mode = "add" }) {
       }
       handleShowAlert({
         show: true,
-        message: result.data.message,
+        message: result.message,
         success: true,
       });
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
       handleShowAlert({
         show: true,
-        message: error.response.data.message,
+        message: error.response.message,
         success: false,
       });
     }
@@ -430,7 +362,7 @@ function CreateTest({ mode = "add" }) {
           handleShowAlert={handleShowAlert}
         />
       )}
-      <Header home={!isValidToken} showAlert={setShowAlert}>
+      <Header showAlert={setShowAlert}>
         <div
           className="edit-circle"
           onClick={() => {

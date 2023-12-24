@@ -33,6 +33,7 @@ router.get("/", async (req, res) => {
     res.send({ error: error.message });
   }
 });
+
 // fetch latest tests
 router.get("/latest", async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Get the requested page, default to 1
@@ -69,7 +70,7 @@ router.get("/latest", async (req, res) => {
   }
 });
 // fetch test created by user
-// fetch all tests
+
 router.post("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Get the requested page, default to 1
   const pageSize = parseInt(req.query.pageSize) || 8; // Set a default page size
@@ -149,14 +150,14 @@ router.delete("/:id", authentication, async (req, res) => {
 });
 
 // update test
-router.put("/:id", async (req, res) => {
+router.put("/:id", authentication, async (req, res) => {
   const { id } = req.params; // Assuming you're passing the ID of the document to update
   const { testName, subject, timer, pmarks, nmarks } = req.body; // Fields to update
 
   try {
     const updatedTest = await Test.findByIdAndUpdate(
       id,
-      { testName, subject, timer, pmarks, nmarks },
+      { testName, subject, timer, pmarks, nmarks, updatedAt: new Date() },
       { new: true, runValidators: true }
     );
     console.log(updatedTest);

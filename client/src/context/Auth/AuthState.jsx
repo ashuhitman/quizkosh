@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setuid } from "process";
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { AUTH_API_ENDPOINTS } from "../../utils/constants";
 
@@ -22,10 +22,8 @@ export function AuthState(props) {
       });
 
       if (response.data.isValid) {
-        console.log("validated...");
         setUser(response.data.user);
       } else {
-        console.log("refreshing....");
         await refreshToken();
       }
     } catch (error) {
@@ -35,7 +33,6 @@ export function AuthState(props) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      console.log("token", token);
       initTokenValidation(token);
     } else {
       setLoading(false);
@@ -65,20 +62,23 @@ export function AuthState(props) {
       const response = await axios.post(AUTH_API_ENDPOINTS.TOKEN, {});
 
       if (response.data.isValid) {
+        const token = response.data.token;
         localStorage.setItem("token", response.data.token);
         setUser(response.data.user);
+        return token;
       } else {
         setUser(null);
         localStorage.removeItem("token");
+        return null;
       }
     } catch (error) {
       console.log("error", error);
+      return null;
     }
-    console.log("refreshed");
   };
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, validateToken, loading }}
+      value={{ login, logout, user, validateToken, refreshToken, loading }}
     >
       {props.children}
     </AuthContext.Provider>

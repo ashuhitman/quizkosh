@@ -5,14 +5,14 @@ const API_BASE_URL =
     : "http://127.0.0.1:8000";
 export const API_ENDPOINTS = {
   TESTS: API_BASE_URL + "/tests",
-  TESTS_CREATE: API_BASE_URL + "/tests/create",
-  TESTS_UPDATE: API_BASE_URL + "/tests/",
-  TESTS_DELETE: API_BASE_URL + "/tests/",
+  TESTS_CREATE: "/tests/create",
+  TESTS_UPDATE: "/tests/",
+  TESTS_DELETE: "/tests/",
   QUESTIONS: API_BASE_URL + "/questions",
-  QUESTIONS_ADD: API_BASE_URL + "/questions/add/",
-  QUESTIONS_UPDATE: API_BASE_URL + "/questions/update/",
-  QUESTIONS_APPEND: API_BASE_URL + "/questions/append/",
-  QUESTIONS_DELETE: API_BASE_URL + "/questions/delete/",
+  QUESTIONS_ADD: "/questions/add/",
+  QUESTIONS_UPDATE: "/questions/update/",
+  QUESTIONS_APPEND: "/questions/append/",
+  QUESTIONS_DELETE: "/questions/delete/",
 };
 
 export const AUTH_API_ENDPOINTS = {

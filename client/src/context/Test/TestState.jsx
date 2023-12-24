@@ -3,14 +3,13 @@ import TestContext from "./TestContext";
 import updateObjectInArray from "../../utils/updateObject";
 
 export const actions = {
-  submit_test: "SUBMIT_TEST",
-  show_solution: "SHOW_SOLUTION",
   reset: "RESET",
   save_tests: "SAVE_TESTS",
   update_test: "UPDATE_TEST",
   save_latest: "LATEST_TEST",
   save_mytest: "SAVE_MYTEST",
   update_visibile_tests: "UPDATE_VISIBLE_TESTS",
+  update_tests: "UPDATE_TESTS",
 };
 const intialState = {
   test: null,
@@ -31,39 +30,15 @@ const intialState = {
   mobile: window.innerWidth < 768 ? true : false,
 };
 const testReducer = (state, action) => {
-  console.log(action);
   switch (action.type) {
-    case actions.save_tests:
+    case actions.update_tests:
       return {
         ...state,
         tests: action.payload.tests,
-        visibleTests: action.payload.visibleTest,
-        totalPages: action.payload.totalPages
-          ? { ...state.totalPages, ...action.payload.totalPages }
-          : state.totalPages,
-      };
-    case actions.save_latest:
-      return {
-        ...state,
-        latest: action.payload.tests,
-        visibleTests: action.payload.visibleTest,
-        totalPages: action.payload.totalPages
-          ? { ...state.totalPages, ...action.payload.totalPages }
-          : state.totalPages,
-      };
-    case actions.save_mytest:
-      return {
-        ...state,
-        myTest: action.payload.tests,
-        visibleTests: action.payload.visibleTest,
-        totalPages: action.payload.totalPages
-          ? { ...state.totalPages, ...action.payload.totalPages }
-          : state.totalPages,
-      };
-    case actions.update_visibile_tests:
-      return {
-        ...state,
-        visibleTests: action.payload,
+        myTest: action.payload.myTest,
+        latest: action.payload.latest,
+        visibleTests: action.payload.visibleTests,
+        totalPages: action.payload.totalPages,
       };
     case actions.update_test:
       return {
@@ -81,8 +56,28 @@ const testReducer = (state, action) => {
 
 function TestState(props) {
   const [testState, dispatch] = useReducer(testReducer, intialState);
+  const updateTestState = ({
+    tests = testState.tests,
+    latest = testState.latest,
+    myTest = testState.myTest,
+    visibleTests = testState.visibleTests,
+    totalPages = testState.totalPages,
+  }) => {
+    dispatch({
+      type: actions.update_tests,
+      payload: {
+        tests,
+        latest,
+        myTest,
+        visibleTests,
+        totalPages: !totalPages
+          ? testState.totalPages
+          : { ...testState.totalPages, ...totalPages },
+      },
+    });
+  };
   return (
-    <TestContext.Provider value={{ testState, dispatch }}>
+    <TestContext.Provider value={{ testState, dispatch, updateTestState }}>
       {props.children}
     </TestContext.Provider>
   );

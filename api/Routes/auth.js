@@ -196,6 +196,7 @@ router.post("/token", async (req, res) => {
         }
         user.password = undefined;
         user.refreshTokens = undefined;
+        user.image = undefined;
         const accessToken = generateAccessToken(user.toJSON());
         res.status(200).json({ isValid: true, token: accessToken, user: user });
       } catch (error) {

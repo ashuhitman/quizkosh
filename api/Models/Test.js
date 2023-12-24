@@ -38,10 +38,21 @@ const testSchema = mongoose.Schema({
   timer: { type: String, required: true, trim: true },
   questions: [questionSchema],
   createdAt: { type: Date, immutable: true, default: Date.now },
-  updateddAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
   owner: { type: String },
   public: { type: Boolean, default: true },
 });
+
+function onUpdate(next) {
+  console.log("pre update: updatedAt");
+  this._update.updatedAt = new Date(); // Set updatedAt field in the update object
+  next();
+}
+testSchema.pre("findOneAndUpdate", onUpdate);
+
+testSchema.pre("updateOne", onUpdate);
+
+testSchema.pre("update", onUpdate);
 
 const Test = new mongoose.model("Test", testSchema);
 export default Test;

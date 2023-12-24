@@ -41,7 +41,6 @@ const isCorrectOptionChosen = (data) => {
 
 const validation = (values) => {
   const errors = {};
-  console.log(values);
   let isSubmit = true;
   if (!values.testName.trim()) {
     errors.testName = "Test name is required";
@@ -56,14 +55,11 @@ const validation = (values) => {
     isSubmit = false;
   }
 
-  // if (!values.pmarks) {
-  //   errors.marks = "Enter the positive marks";
-  //   isSubmit = false;
-  // }
-  // if (values.nmarks) {
-  //   errors.questionAmount = "Enter the +ve/-ve marks per question";
-  //   isSubmit = false;
-  // }
+  if (values.pmarks < values.nmarks) {
+    errors.marks =
+      "+ve marks per question cann't be less than -v marks per question";
+    isSubmit = false;
+  }
 
   if (values.timer === "0" || !values.timer.trim()) {
     errors.timer = "Enter the timer value in minutes";

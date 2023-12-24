@@ -57,6 +57,7 @@ router.put("/update/:id", async (req, res) => {
         $set: {
           "questions.$[el].question": req.body.question,
           "questions.$[el].options": req.body.options,
+          updatedAt: new Date(),
         },
       },
       {
@@ -88,13 +89,15 @@ router.put("/append/:id", async (req, res) => {
 
     const result = await Test.findOneAndUpdate(
       { _id: testId },
-      { $push: { questions: newQuestion } }
+
+      { $push: { questions: newQuestion } },
+      { new: true }
     );
-    console.log(result);
+
     if (result) {
       const lastIndex = result.questions.length - 1;
       const updatedQuestion = result.questions[lastIndex];
-      console.log(updatedQuestion);
+      console.log(result.questions);
       return res.status(201).send({
         success: "question updated successfully",
         data: updatedQuestion,
@@ -136,65 +139,5 @@ router.delete("/delete/:testId/:questionId", async (req, res) => {
       .json({ message: "Error deleting question from Test", error });
   }
 });
-// append a question
-// router.post("/update/:id", async (req, res) => {
-//   try {
-//     const id = req.params["id"];
-//     const { id: questionId, question } = req.body;
-//     console.log(questionId, question);
-//     const result = await Test.findOneAndUpdate(
-//       { _id: id },
-//       { $set: { "questions.$[el].question": question } },
-//       {
-//         arrayFilters: [{ "el._id": questionId }],
-//         new: true,
-//       }
-//     );
 
-//     if (result) {
-//       res.send(result);
-//     } else {
-//       res.send({ error: "Id not found" });
-//     }
-//   } catch (error) {
-//     res.send({ error: error.message });
-//   }
-// });
-
-// // update options
-// router.put("/options/update/:docId", async (req, res) => {
-//   try {
-//     const documentId = req.params["docId"];
-//     const { id: questionId, option } = req.body;
-//     console.log(questionId, option);
-//     const result = await Test.updateOne(
-//       {
-//         _id: documentId,
-//         "questions._id": questionId,
-//         "questions.options._id": option.id,
-//       },
-//       {
-//         $set: {
-//           "questions.$[question].options.$[option].text": option.text,
-//           "questions.$[question].options.$[option].isAnswer": option.isAnswer,
-//         },
-//       },
-//       {
-//         arrayFilters: [
-//           {
-//             // filter for question
-//             "question._id": questionId,
-//           },
-//           {
-//             // filter for option
-//             "option._id": option.id,
-//           },
-//         ],
-//       }
-//     );
-//     res.send(result);
-//   } catch (error) {
-//     res.send({ error: error.message });
-//   }
-// });
 export default router;
