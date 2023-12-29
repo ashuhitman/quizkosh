@@ -187,7 +187,7 @@ router.post("/token", async (req, res) => {
           email: data.email,
           refreshTokens: { $in: [refreshToken] },
         });
-
+        console.log(refreshToken, user);
         if (!user) {
           res.clearCookie("refreshToken");
           return res

@@ -57,7 +57,6 @@ router.put("/update/:id", async (req, res) => {
         $set: {
           "questions.$[el].question": req.body.question,
           "questions.$[el].options": req.body.options,
-          updatedAt: new Date(),
         },
       },
       {
@@ -76,6 +75,7 @@ router.put("/update/:id", async (req, res) => {
     }
     res.status(404).send({ error: "test id not found" });
   } catch (error) {
+    console.log(error);
     res.status(404).send({ error: error });
   }
 });

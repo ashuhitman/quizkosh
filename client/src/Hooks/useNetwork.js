@@ -24,6 +24,7 @@ axiosInstance.interceptors.request.use(
 
     // Token refresh logic before fetching data
     try {
+      axios.defaults.withCredentials = true;
       const response = await axios.post(AUTH_API_ENDPOINTS.TOKEN);
       const token = response.data.token;
       if (!token) throw new Error("No valid token found!");
@@ -31,7 +32,7 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = "Bearer " + token;
       console.log("refreshed...");
     } catch (error) {
-      console.error("useFetch: ", error);
+      console.error("useNetwork: ", error);
     } finally {
       isRefreshing = false;
     }

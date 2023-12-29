@@ -17,10 +17,13 @@
   border-radius: 5px;
 
   font-style: bold;
+  transition: padding 0.2s linear;
 }
 
 .logo:hover {
   box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+  padding-left: 14px;
+  padding-right: 6px;
 }
 
 .logo > a {

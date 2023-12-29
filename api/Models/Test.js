@@ -43,16 +43,21 @@ const testSchema = mongoose.Schema({
   public: { type: Boolean, default: true },
 });
 
-function onUpdate(next) {
-  console.log("pre update: updatedAt");
-  this._update.updatedAt = new Date(); // Set updatedAt field in the update object
-  next();
-}
-testSchema.pre("findOneAndUpdate", onUpdate);
+// function onUpdate(next) {
+//   console.log("pre update: updatedAt");
+//   this._update = {
+//     ...this._update,
+//     $set: {
+//       updatedAt: new Date(),
+//     },
+//   };
+//   next();
+// }
+// testSchema.pre("findOneAndUpdate", onUpdate);
 
-testSchema.pre("updateOne", onUpdate);
+// testSchema.pre("updateOne", onUpdate);
 
-testSchema.pre("update", onUpdate);
+// testSchema.pre("update", onUpdate);
 
 const Test = new mongoose.model("Test", testSchema);
 export default Test;

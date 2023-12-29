@@ -267,10 +267,9 @@ function CreateTest({ mode = "add" }) {
           data._id = testData[currentQuestion - 1]._id;
         }
 
-        axios.defaults.withCredentials = true;
         // const result = await axios.put(url, data);
-        const result = await handleRequest(url, "PUT", testData);
-        // console.log(`created test - ${mode}:`, result);
+        const result = await handleRequest(url, "PUT", data);
+        console.log(`created test - ${mode}:`, url, result);
         data = result.data;
         handleShowAlert({
           show: true,
@@ -282,13 +281,14 @@ function CreateTest({ mode = "add" }) {
 
       return data;
     } catch (error) {
+      setloading(false);
       console.log("error", error);
       handleShowAlert({
         show: true,
-        message: error.response.data.error,
+        message: error.response.error,
         success: false,
       });
-      setloading(false);
+
       return null;
     }
   };
