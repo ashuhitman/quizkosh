@@ -30,6 +30,7 @@ const intialState = {
   mobile: window.innerWidth < 768 ? true : false,
 };
 const testReducer = (state, action) => {
+  console.log(action);
   switch (action.type) {
     case actions.update_tests:
       return {
@@ -43,11 +44,11 @@ const testReducer = (state, action) => {
     case actions.update_test:
       return {
         ...state,
-        test: action.payload.test,
+        test: action.payload,
       };
 
     case actions.reset:
-      return { ...state, tests: state.tests, test: action.payload.test };
+      return { ...state, test: action.payload.test };
     case actions.restart_test:
     default:
       return state;

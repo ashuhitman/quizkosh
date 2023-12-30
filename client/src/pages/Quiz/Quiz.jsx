@@ -42,6 +42,7 @@ import Loader from "../../Components/Loader/Loader";
 function Quiz() {
   const { testState, dispatch } = useContext(TestContext);
   const [quizState, quizDispatch] = useReducer(quizReducer, quizintialState);
+  console.log(quizState);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   console.log(testState);
@@ -57,41 +58,42 @@ function Quiz() {
   useEffect(() => {
     // check if it is mobile
     const isMobile = window.innerWidth > 600;
-    console.log("screen width: ", isMobile);
+
     setShowSidebar(isMobile);
     let time;
-    console.log(testState);
+
     if (!testState.test) {
       // check if data is locally available
-      const localStorageData = JSON.parse(localStorage.getItem("test") || "{}");
-      if (Object.keys(localStorageData).length !== 0) {
-        // data is locally available
-        // set time
-        time = localStorageData.timer;
-        // set test data
-        dispatch({
-          type: actions.reset,
-          payload: { test: localStorageData },
-        });
-      } else {
-        // else fetch it from the server
-        axios(`${API_ENDPOINTS.TESTS}/${docId}`)
-          .then((response) => {
-            console.log(response.data);
-            const test = response.data;
-            // set timer
-            time = test.timer;
-            dispatch({
-              type: actions.update_test,
-              payload: { test: localStorageData },
-            });
-            // save current test to local storage
-            localStorage.setItem("test", JSON.stringify(test));
-          })
-          .catch((error) => {
-            console.log("error", error);
+      // const localStorageData = JSON.parse(localStorage.getItem("test") || null);
+      // if (localStorageData) {
+      //   // data is locally available
+      //   // set time
+      //   time = localStorageData.timer;
+      //   // set test data
+      //   dispatch({
+      //     type: actions.reset,
+      //     payload: { test: localStorageData },
+      //   });
+      // } else {
+      console.log("fetching test data...");
+      // else fetch it from the server
+      axios(`${API_ENDPOINTS.TESTS}/${docId}`)
+        .then((response) => {
+          console.log(response.data);
+          const { test } = response.data;
+          // set timer
+          time = test.timer;
+          dispatch({
+            type: actions.update_test,
+            payload: test,
           });
-      }
+          // save current test to local storage
+          // localStorage.setItem("test", JSON.stringify(test));
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+      // }
     } else {
       time = testState.test.timer;
     }
@@ -310,7 +312,7 @@ function Quiz() {
     }
   };
 
-  if (!testState.test) {
+  if (!testState.test || testState.test.length === 0) {
     console.log("loading...", testState);
     return (
       <div
