@@ -82,8 +82,11 @@ function Quiz() {
       // save current test to local storage
       time = testState.test.timer * 60;
     }
-
-    if (localStorage.getItem("time")) {
+    const x = localStorage.getItem("time");
+    if (x) {
+      if (x > time) {
+        localStorage.setItem("time", time);
+      }
       start();
     } else {
       localStorage.setItem("time", time);
