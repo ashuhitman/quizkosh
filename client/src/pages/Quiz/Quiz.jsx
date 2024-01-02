@@ -42,10 +42,9 @@ import Loader from "../../Components/Loader/Loader";
 function Quiz() {
   const { testState, dispatch } = useContext(TestContext);
   const [quizState, quizDispatch] = useReducer(quizReducer, quizintialState);
-  console.log(quizState);
+
   const [showSidebar, setShowSidebar] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
-  console.log(testState);
 
   // console.log("quiz initialized: ", quizState);
   // get document id
@@ -56,53 +55,40 @@ function Quiz() {
   const time = secondsToTime(seconds);
 
   useEffect(() => {
+    initiQuiz();
+  }, []);
+
+  const initiQuiz = async () => {
     // check if it is mobile
     const isMobile = window.innerWidth > 600;
 
     setShowSidebar(isMobile);
     let time;
-
     if (!testState.test) {
-      // check if data is locally available
-      // const localStorageData = JSON.parse(localStorage.getItem("test") || null);
-      // if (localStorageData) {
-      //   // data is locally available
-      //   // set time
-      //   time = localStorageData.timer;
-      //   // set test data
-      //   dispatch({
-      //     type: actions.reset,
-      //     payload: { test: localStorageData },
-      //   });
-      // } else {
       console.log("fetching test data...");
-      // else fetch it from the server
-      axios(`${API_ENDPOINTS.TESTS}/${docId}`)
-        .then((response) => {
-          console.log(response.data);
-          const { test } = response.data;
-          // set timer
-          time = test.timer;
-          dispatch({
-            type: actions.update_test,
-            payload: test,
-          });
-          // save current test to local storage
-          // localStorage.setItem("test", JSON.stringify(test));
-        })
-        .catch((error) => {
-          console.log("error", error);
+      try {
+        const response = await axios(`${API_ENDPOINTS.TESTS}/${docId}`);
+        const { test } = response.data;
+        dispatch({
+          type: actions.update_test,
+          payload: test,
         });
-      // }
+        // save current test to local storage
+        time = test.timer * 60;
+      } catch (error) {
+        console.error("error", error);
+      }
     } else {
-      time = testState.test.timer;
+      // save current test to local storage
+      time = testState.test.timer * 60;
     }
 
-    // save  at local storage
-    if (!localStorage.getItem("time")) {
-      localStorage.setItem("time", parseInt(time) * 60);
+    if (localStorage.getItem("time")) {
+      start();
+    } else {
+      localStorage.setItem("time", time);
+      start();
     }
-    start();
     // get local storage data
     const localData = JSON.parse(
       localStorage.getItem("testState") || JSON.stringify(quizintialState)
@@ -115,9 +101,8 @@ function Quiz() {
         type: quizActions.state_from_local_state,
         payload: localData,
       });
-      console.log("localStorageData: ", localData);
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (!isTimeLeft && !quizState.submit) {
@@ -140,7 +125,7 @@ function Quiz() {
 
     saveStateToLocalStorage(quizState);
     stop();
-    console.log("submit: ", testState);
+
     return true;
   };
 
@@ -288,7 +273,7 @@ function Quiz() {
     const selectedOption = null;
     const answers = quizState.answers;
     const answer = answers[quizState.currentQuestion];
-    console.log("clear resonse button clicked: ", answers);
+
     if (answer) {
       answers[quizState.currentQuestion] = {
         selectedOption: null,
@@ -313,7 +298,6 @@ function Quiz() {
   };
 
   if (!testState.test || testState.test.length === 0) {
-    console.log("loading...", testState);
     return (
       <div
         style={{

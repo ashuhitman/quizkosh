@@ -9,10 +9,11 @@ export default function useCountDownTimer(initialState) {
   useEffect(() => {
     let timeout;
     if (isRunning) {
-      if (seconds === undefined || seconds === null) {
+      if (seconds === undefined || seconds === null || seconds == "null") {
         console.log("invalid time");
       } else {
         // save current seconds && running status
+
         localStorage.setItem("time", seconds);
 
         if (seconds === 0) {
@@ -41,9 +42,10 @@ export default function useCountDownTimer(initialState) {
   const start = () => {
     const seconds = localStorage.getItem("time");
     setSeconds(seconds);
+    console.log("starting timer", seconds);
     // first load
     const active = JSON.parse(localStorage.getItem("active"));
-    console.log("running start...", seconds, active, typeof active);
+
     if (active === null) {
       console.log("active:null ", active);
       localStorage.setItem("active", true);
@@ -65,8 +67,8 @@ export default function useCountDownTimer(initialState) {
   };
 
   const resume = () => {
-    console.log("resume: ", localStorage.getItem("active"));
-    localStorage.setItem("active", JSON.stringify(true));
+    // console.log("resume: ", localStorage.getItem("active"));
+    localStorage.setItem("active", true);
     if (seconds) {
       setIsRunning(true);
       setSeconds(seconds);
@@ -75,8 +77,8 @@ export default function useCountDownTimer(initialState) {
   };
 
   const pause = () => {
-    console.log("pause: ", localStorage.getItem("active"));
-    localStorage.setItem("active", JSON.stringify(false));
+    // console.log("pause: ", localStorage.getItem("active"));
+    localStorage.setItem("active", false);
     setIsRunning(false);
   };
 
