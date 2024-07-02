@@ -69,7 +69,7 @@ const validation = (values) => {
 };
 
 const validateUseData = (data, reg = 1) => {
-  console.log("validation", data);
+
   const errors = {};
   let isError = false;
 
