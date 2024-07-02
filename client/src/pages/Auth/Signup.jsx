@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Input from "../../Components/Input/Input";
 import { validateUseData } from "../../utils/validation";
+import { AUTH_API_ENDPOINTS } from "../../utils/constants";
 
 function Signup({ changeAuthState, handleShowAlert, loading, setLoading }) {
   const [formData, setFormData] = useState({
@@ -38,12 +39,12 @@ function Signup({ changeAuthState, handleShowAlert, loading, setLoading }) {
       setLoading(false);
       return;
     }
-    console.log("data", data);
+  
     // else submit data
     try {
       axios.defaults.withCredentials = true;
       const result = await axios.post(
-        "http://127.0.0.1:8000/auth/signup",
+        AUTH_API_ENDPOINTS.SIGNUP,
         data
       );
       console.log(result);
